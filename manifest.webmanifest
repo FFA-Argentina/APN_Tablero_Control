@@ -1,0 +1,20 @@
+{
+  "id": "./",
+  "name": "Tablero de control · APN",
+  "short_name": "Tablero APN",
+  "description": "Tablero de control de la Administración de Parques Nacionales: accesos, cobranzas y deuda exigible de prestadores turísticos, trienio octubre 2023 a septiembre 2026.",
+  "lang": "es-AR",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#EDE7DA",
+  "theme_color": "#2C4A34",
+  "categories": ["business", "finance", "government"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

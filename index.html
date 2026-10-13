@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2C4A34" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#171B15" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
+<meta name="format-detection" content="telephone=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tablero APN">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Tablero de control · APN">
+<meta property="og:description" content="Tablero de control del trienio octubre 2023 a septiembre 2026: accesos, cobranzas y deuda exigible de prestadores turísticos.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+<title>Tablero de control · APN</title>
+<meta name="description" content="Tablero de control de la Administración de Parques Nacionales: accesos, cobranzas y deuda exigible de prestadores turísticos en los ciclos oct 23–sep 24, oct 24–sep 25 y oct 25–sep 26.">
+<style>
+@font-face{font-family:'Archivo';font-style:normal;font-weight:100 900;font-stretch:62% 125%;font-display:swap;src:url(fonts/archivo-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Archivo';font-style:normal;font-weight:100 900;font-stretch:62% 125%;font-display:swap;src:url(fonts/archivo-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+/* Layout: una columna de informe (máx. 1180px) con índice fijo de secciones; la paleta y la tipografía siguen la de los tres tableros de origen (papel, verde bosque, ámbar de señalización). */
+:root{
+  --paper:#EDE7DA; --panel:#E4DCC9; --panel-2:#E9E1CE; --ink:#22271F; --muted:#5F5C50;
+  --line:#C3B79C; --forest:#2C4A34; --forest-2:#3E6B49; --amber:#C8801F; --clay:#A6472B; --stone:#8A8572;
+  --on-forest:#F3EEE2; --tip-bg:#22271F; --tip-fg:#EDE7DA; --bar:#B9AE93; --grid:#D3C8AF;
+  --font:'Archivo',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --display:'Archivo',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#171B15; --panel:#20261D; --panel-2:#262D22; --ink:#E7E1D3; --muted:#A8A394;
+  --line:#3C4536; --forest:#8DBB98; --forest-2:#A6CDAE; --amber:#E0A54E; --clay:#DD8A6C; --stone:#A29D8A;
+  --on-forest:#14180F; --tip-bg:#E7E1D3; --tip-fg:#171B15; --bar:#5A604F; --grid:#2E3529; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#171B15; --panel:#20261D; --panel-2:#262D22; --ink:#E7E1D3; --muted:#A8A394;
+  --line:#3C4536; --forest:#8DBB98; --forest-2:#A6CDAE; --amber:#E0A54E; --clay:#DD8A6C; --stone:#A29D8A;
+  --on-forest:#14180F; --tip-bg:#E7E1D3; --tip-fg:#171B15; --bar:#5A604F; --grid:#2E3529; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{background:var(--paper);color:var(--ink)}
+body{font-family:var(--font);font-size:14.5px;line-height:1.5;-webkit-font-smoothing:antialiased;margin:0;padding-inline:clamp(16px,4vw,48px);padding-block:0 64px;overflow-x:hidden;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+@supports(padding:max(0px)){body{padding-left:max(clamp(16px,4vw,48px),env(safe-area-inset-left));padding-right:max(clamp(16px,4vw,48px),env(safe-area-inset-right));padding-bottom:max(64px,calc(44px + env(safe-area-inset-bottom)))}
+  header.top{padding-top:max(22px,env(safe-area-inset-top))}}
+button,select,a{-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+.wrap{max-width:1180px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;color:var(--forest)}
+h1{font-weight:800;font-size:clamp(24px,3.4vw,38px);line-height:1.08;letter-spacing:-.015em;max-width:30ch}
+h1 em{font-style:normal;color:var(--ink)}
+h2{font-weight:800;font-size:clamp(21px,2.4vw,27px);letter-spacing:-.01em;font-stretch:90%}
+h3{font-weight:700;font-size:16px;color:var(--ink)}
+p{margin:0;max-width:72ch}
+.eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--forest);font-weight:700;line-height:1.5}
+.eyebrow span{color:var(--muted);font-weight:600}
+.muted{color:var(--muted)}
+.num,td,th{font-variant-numeric:tabular-nums}
+
+header.top{border-bottom:2px solid var(--ink);padding-block:22px 18px;display:flex;gap:26px;align-items:flex-start}
+.brand{flex:none;width:96px;height:96px;border-radius:50%;background:var(--forest);display:flex;align-items:center;justify-content:center;padding:6px;box-shadow:0 2px 10px rgba(20,24,18,.18)}
+.brand img{width:100%;height:100%;object-fit:contain;display:block}
+@media(max-width:560px){header.top{flex-direction:column;gap:14px}.brand{width:74px;height:74px}}
+.links-doc{display:flex;flex-wrap:wrap;gap:10px}
+.upd{position:fixed;left:50%;transform:translateX(-50%) translateY(160%);bottom:max(16px,env(safe-area-inset-bottom));z-index:60;display:flex;gap:12px;align-items:center;background:var(--tip-bg);color:var(--tip-fg);border-radius:3px;padding:11px 14px;font-size:12.5px;box-shadow:0 10px 30px rgba(20,24,18,.34);transition:transform .25s;max-width:calc(100vw - 28px)}
+.upd.on{transform:translateX(-50%) translateY(0)}
+.upd button{appearance:none;border:1.5px solid var(--tip-fg);background:transparent;color:var(--tip-fg);font:700 11.5px var(--font);letter-spacing:.06em;text-transform:uppercase;padding:6px 11px;border-radius:2px;cursor:pointer;white-space:nowrap}
+.head-body{display:grid;gap:12px;min-width:0}
+.sub{color:var(--muted);font-size:14px;max-width:62ch;line-height:1.5}
+.doc-link{justify-self:start;display:inline-flex;align-items:center;gap:8px;color:var(--ink);text-decoration:none;font-size:12.5px;font-weight:600;background:var(--paper);border:1.5px solid var(--ink);border-radius:2px;padding:9px 13px;line-height:1}
+.doc-link:hover{background:var(--forest);border-color:var(--forest);color:var(--on-forest)}
+.doc-link svg{width:12px;height:14px;opacity:.8}
+.doc-link.primary{background:var(--forest);border-color:var(--forest);color:var(--on-forest)}
+.doc-link.primary .dl-sub{color:var(--on-forest);opacity:.75}
+.doc-link.primary:hover{background:var(--forest-2);border-color:var(--forest-2)}
+nav.toc a.pdf-nav{color:var(--forest);border-bottom-color:var(--amber)}
+.doc-link .dl-sub{color:var(--muted);font-weight:400}
+.doc-link:hover .dl-sub{color:inherit}
+.meta{display:flex;flex-wrap:wrap;gap:6px 22px;font-size:12px;color:var(--muted)}
+.meta b{color:var(--ink);font-weight:600}
+
+nav.toc{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--paper);border-bottom:1px solid var(--line);
+  display:flex;flex-wrap:wrap;gap:10px 26px;align-items:flex-end;justify-content:space-between;padding-block:16px 12px}
+@media(max-width:640px){nav.toc{position:static}}
+nav.toc .links{display:flex;flex-wrap:wrap;gap:4px 16px}
+nav.toc a{color:var(--ink);text-decoration:none;font-size:13px;font-weight:600;padding:3px 0;border-bottom:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible{border-bottom-color:var(--amber);outline:none}
+
+.seg{display:inline-flex;border:1.5px solid var(--ink);border-radius:2px;overflow:hidden;background:var(--paper);flex-wrap:wrap}
+.seg button{appearance:none;border:0;background:transparent;color:var(--ink);font:500 13px/1 var(--font);padding:8px 13px;cursor:pointer;border-right:1.5px solid var(--ink)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--forest);color:var(--on-forest)}
+.seg button:hover:not([aria-pressed="true"]){background:var(--panel)}
+.seg button:focus-visible,select:focus-visible,th button:focus-visible,.more:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.ctl{display:flex;flex-direction:column;gap:6px}
+.ctl>label,.ctl>.lbl{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:700}
+select{font:500 13px var(--font);color:var(--ink);background:var(--paper);border:1.5px solid var(--ink);border-radius:2px;padding:7px 10px;max-width:100%}
+.controls{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-end}
+
+section.sec{padding-block:38px 6px;display:grid;gap:18px;scroll-margin-top:64px}
+.sec-head{display:grid;gap:8px;border-top:1px solid var(--ink);padding-top:14px}
+.sec-head .eyebrow{color:var(--amber)}
+
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media(max-width:980px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.kpis{grid-template-columns:1fr}}
+.kpi{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--forest);border-radius:3px;padding:13px 15px 14px;display:grid;gap:6px;align-content:start;min-width:0}
+.kpi.debt{border-left-color:var(--clay)}
+.kpi.com{border-left-color:var(--amber)}
+.kpi.cob{border-left-color:var(--forest-2)}
+.kpi h3{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.kpi .big{font-size:26px;font-weight:600;line-height:1.05}
+.kpi .big small{font-size:11px;font-weight:500;color:var(--muted);margin-left:5px}
+.kpi .chg{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px}
+.kpi .cyc{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;border-top:1px dashed var(--line);padding-top:7px;font-size:11px;color:var(--muted)}
+.kpi .cyc b{display:block;color:var(--ink);font-weight:600;font-size:12px}
+.pos{color:var(--forest-2);font-weight:600}.neg{color:var(--clay);font-weight:600}.na{color:var(--muted)}
+
+.findings{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:10px 28px;margin:0;padding:0;list-style:none}
+.findings li{padding-left:12px;border-left:3px solid var(--amber);max-width:none}
+.findings b{color:var(--forest)}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:2px;padding:16px;display:grid;gap:12px;min-width:0;align-content:start}
+.panel-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px 20px;align-items:flex-end}
+.panel-head p{font-size:12.5px;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12px;color:var(--muted);align-items:center}
+.sw{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.chart{position:relative;min-width:0}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.axis{font:11px var(--font);fill:var(--muted)}
+.lbl-strong{font:600 11.5px var(--font);fill:var(--ink)}
+.tip{position:absolute;pointer-events:none;background:var(--tip-bg);color:var(--tip-fg);border-radius:3px;padding:9px 11px;font-size:12px;line-height:1.45;min-width:170px;z-index:20;opacity:0;transition:opacity .1s;box-shadow:0 8px 22px rgba(0,0,0,.25)}
+.tip.on{opacity:1}
+.tip .t{font-weight:700;margin-bottom:4px}
+.tip .r{display:flex;justify-content:space-between;gap:14px;font-variant-numeric:tabular-nums}
+
+.tablebox{overflow-x:auto;-webkit-overflow-scrolling:touch;min-width:0}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:7px 9px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left;white-space:normal;min-width:150px}
+thead th{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;border-bottom:1.5px solid var(--ink);vertical-align:bottom}
+th button{all:unset;cursor:pointer}
+th button::after{content:" ↕";opacity:.35}
+th[aria-sort="descending"] button::after{content:" ↓";opacity:1}
+th[aria-sort="ascending"] button::after{content:" ↑";opacity:1}
+tr.tot td{font-weight:700;background:var(--panel-2)}
+td.tag{text-align:center}
+.pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:2px}
+.pill.si{background:var(--forest);color:var(--on-forest)}
+.pill.no{border:1px solid var(--line);color:var(--muted)}
+.note{font-size:12px;color:var(--muted);max-width:100ch}
+.more{appearance:none;justify-self:start;border:1px solid var(--line);background:var(--paper);color:var(--forest);font:700 11px var(--font);letter-spacing:.08em;text-transform:uppercase;padding:7px 11px;border-radius:2px;cursor:pointer}
+.stack{display:grid;gap:18px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 268px;gap:22px;align-items:start}
+@media(max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.chartcard{background:var(--panel-2);border:1px solid var(--line);border-radius:3px;padding:16px 14px 8px;min-width:0}
+.chart-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 14px;margin:0 4px 6px}
+.chart-title{font-size:18px;font-weight:600;color:var(--ink)}
+.chart-unit{font-size:11px;color:var(--muted);letter-spacing:.03em}
+.serbox{display:grid;gap:8px;align-content:start;min-width:0}
+.serbox>.lbl{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.serlist{background:var(--panel-2);border:1px solid var(--line);border-radius:3px}
+.serlist button{all:unset;box-sizing:border-box;display:flex;width:100%;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line);cursor:pointer;font-size:13px}
+.serlist button:hover{background:var(--panel)}
+.serlist button:focus-visible{outline:2px solid var(--amber);outline-offset:-2px}
+.serlist button[aria-pressed="false"]{opacity:.42}
+.serlist button[aria-pressed="true"].on{background:var(--panel);font-weight:700}
+.serlist .v{margin-left:auto;font-weight:600;font-variant-numeric:tabular-nums}
+.serlist .tot{display:flex;padding:9px 12px;font-weight:700;font-size:13px}
+.serlist .sq{width:12px;height:12px;border-radius:2px;flex:none}
+.hint{font-size:11.5px;color:var(--muted);line-height:1.45}
+.two{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px}
+@media(max-width:900px){.two{grid-template-columns:minmax(0,1fr)}}
+.cycbox{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media(max-width:560px){.cycbox{grid-template-columns:1fr}}
+.cycbox div{border-top:2px solid var(--line);padding-top:6px;font-size:12px;color:var(--muted)}
+.cycbox div b{display:block;font-size:20px;color:var(--ink);font-weight:700}
+.cycbox div:last-child{border-top-color:var(--forest)}
+ol.concl{margin:0;padding-left:22px;display:grid;gap:10px;max-width:90ch}
+ol.concl li::marker{color:var(--amber);font-weight:800}
+.method{display:grid;gap:8px;font-size:13px;max-width:100ch}
+.method p{max-width:none}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-top:12px;font-size:12px;color:var(--muted);max-width:72ch}
+footer a{color:var(--forest);font-weight:600}
+.printonly{display:none}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+@media print{
+  @page{size:A4;margin:14mm 12mm}
+  html,body{background:#fff!important}
+  body{font-size:10.5px;padding:0}
+  nav.toc,.controls,.more,.noprint{display:none!important}
+  .printonly{display:block}
+  section.sec{padding-block:16px 0;gap:12px}
+  .sec-head{break-inside:avoid;break-after:avoid}
+  .panel,section.sec,.stack{display:block}
+  .panel{padding:10px}
+  .panel>*+*,section.sec>*+*,.stack>*+*{margin-top:10px}
+  .panel-head{break-after:avoid}
+  .two{display:block}
+  .two>*+*{margin-top:12px}
+  .kpi,.chart,tr,.panel-head,.cycbox,.findings li,ol.concl li{break-inside:avoid}
+  .tablebox{overflow:visible}
+  table{font-size:8.6px}
+  th,td{padding:4px 5px}
+  thead th{font-size:7.2px;letter-spacing:.04em;white-space:normal}
+  th button::after{content:""!important}
+  th:first-child,td:first-child{min-width:0}
+  .lead{font-size:13px}
+  h1{font-size:28px}
+  h2{font-size:19px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <div class="brand"><img src="icons/logo-apn.png" alt="Administración de Parques Nacionales"></div>
+  <div class="head-body">
+    <div class="eyebrow">Administración de Parques Nacionales<br><span>Dirección Nacional de Uso Público · Dirección de Concesiones</span></div>
+    <h1>Tablero de control – <em>Accesos, cobranzas y deuda · trienio octubre 2023 a septiembre 2026</em></h1>
+    <p class="sub">Pasando el cursor o tocando los gráficos se observa el detalle mensual; haciendo clic en la lista de series se aíslan las categorías de visitante o se abre una dependencia. Los controles permiten cambiar la moneda, la medida de accesos y el universo de cobranza, y cada tabla se ordena desde su encabezado.</p>
+    <div class="meta"><span><b>3.762.904</b> tickets en el último ciclo</span><span><b>11</b> dependencias con venta</span><span><b>3.931</b> deudores</span><span><b>34</b> dependencias con deuda</span></div>
+    <div class="links-doc noprint">
+      <a class="doc-link primary" data-pdf href="informe/Tablero_de_control_APN_2023-2026.pdf" target="_blank" rel="noopener"><svg viewBox="0 0 12 14" aria-hidden="true"><path d="M1 1h6l4 4v8H1z" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M7 1v4h4" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>Tablero de control · informe <span class="dl-sub">PDF · 22 láminas</span></a>
+      <a class="doc-link" id="dl-html" href="descargas/tablero-de-control-apn.html" download="tablero-de-control-apn.html"><svg viewBox="0 0 12 14" aria-hidden="true"><path d="M1 1h6l4 4v8H1z" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M7 1v4h4" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>Descargar el tablero <span class="dl-sub">HTML · funciona sin conexión</span></a>
+    </div>
+    <p class="printonly note">Importes de flujos en millones de pesos de septiembre de 2026 (unidades CER × 840,1); deuda en pesos nominales al 30/09/2026.</p>
+  </div>
+</header>
+
+<nav class="toc" aria-label="Secciones">
+  <div class="ctl"><span class="lbl">Secciones</span><div class="links"><a href="#resumen">Resumen</a><a href="#accesos">Accesos</a><a href="#cobranzas">Cobranzas</a><a href="#deuda">Deuda</a><a href="#cruzados">Cruzados</a><a href="#conclusiones">Conclusiones</a><a href="#metodologia">Metodología</a><a class="pdf-nav" data-pdf href="informe/Tablero_de_control_APN_2023-2026.pdf" target="_blank" rel="noopener">Informe PDF ↗</a></div></div>
+  <div class="ctl"><span class="lbl" id="unit-l">Unidad</span><div class="seg" role="group" aria-labelledby="unit-l" id="unit">
+    <button data-u="ars" aria-pressed="true">$ de sep-26</button><button data-u="cer" aria-pressed="false">Unidades CER</button><button data-u="usd" aria-pressed="false">Dólares</button>
+  </div></div>
+</nav>
+
+<section class="sec" id="resumen">
+  <div class="sec-head"><div class="eyebrow">Resumen</div><h2>Cifras del trienio</h2><p>En tres ciclos la APN vendió 11,4% más accesos, pero en el último cobró menos en términos reales por boletería (−12,5% interanual) y a prestadores (−11,0%). La deuda exigible de prestadores al 30/09/2026 equivale al 5,8% de la cobranza anual a prestadores.</p><p class="muted" id="unitnote"></p></div>
+  <div class="kpis" id="kpis"></div>
+  <ul class="findings">
+    <li><b>Accesos.</b> Tickets de no residentes +23,5% interanual y residentes −13,4%. El neto por ticket de no residentes bajó 26,2% en pesos constantes, y eso explica la caída del ingreso neto.</li>
+    <li><b>Comisiones.</b> Las tercerizadoras retuvieron el 49,7% de lo percibido en el último ciclo, casi lo mismo que el ingreso neto que quedó para la APN. En Iguazú, el 61,7%.</li>
+    <li><b>Cobranzas.</b> La cobranza a prestadores cayó en los tres ciclos (−18,8% en el trienio), con Tierra del Fuego en −50,0% y Glaciares en −28,4%.</li>
+    <li><b>Deuda.</b> $1.545,9 M brutos; el 79,8% del capital se originó en 2025–2026. Nahuel Huapi concentra el 39,8% y sólo el 27,3% es de prestadores con habilitación vigente.</li>
+  </ul>
+</section>
+
+<section class="sec" id="accesos">
+  <div class="sec-head"><div class="eyebrow">1 · Accesos</div><h2>Más visitas, menos ingreso real por visita</h2>
+  <p>Los tickets crecieron 11,4% en el trienio y los días de visita 43,5%, pero el ingreso neto real del último ciclo quedó 12,5% debajo del anterior: la tarifa no acompañó la inflación y las comisiones subieron.</p></div>
+  <div class="panel">
+    <div class="controls">
+      <div class="ctl"><span class="lbl" id="am-l">Medida</span><div class="seg" id="amet" role="group" aria-labelledby="am-l">
+        <button data-m="t" aria-pressed="true">Tickets</button><button data-m="d" aria-pressed="false">Días de visita</button><button data-m="n" aria-pressed="false">Ingreso neto</button><button data-m="c" aria-pressed="false">Comisiones</button><button data-m="i" aria-pressed="false">Teórico</button></div></div>
+      <div class="ctl"><label for="adep">Dependencia</label><select id="adep"></select></div>
+    </div>
+    <div class="grid">
+      <div class="chartcard"><div class="chart-head"><h3 class="chart-title" id="a-title"></h3><span class="chart-unit" id="a-unit"></span></div><div class="chart" id="achart"></div></div>
+      <aside class="serbox"><div class="lbl">Series · categorías</div><div class="serlist" id="aser"></div><p class="hint">Clic para quitar o sumar una categoría; las barras se apilan con las activas. Valores del ciclo oct 25–sep 26.</p></aside>
+    </div>
+    <div class="tablebox"><table id="acyc"></table></div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><h3>Por dependencia · oct 25–sep 26</h3><p class="noprint">Clic en un encabezado para ordenar.</p></div>
+    <div class="tablebox"><table id="adeps"></table></div>
+    <p class="note">Los Alerces y Casa Central se incorporaron al registro durante el primer ciclo: su variación trienal figura como s/base. Lago Puelo y Laguna Blanca sólo registraron ventas residuales en 2023–2024. La comisión de Iguazú conviene validarla con el contrato de la tercerizadora.</p>
+  </div>
+</section>
+
+<section class="sec" id="cobranzas">
+  <div class="sec-head"><div class="eyebrow">2 · Cobranzas</div><h2>La cobranza a prestadores cae tres ciclos seguidos</h2>
+  <p>En pesos constantes la cobranza a prestadores turísticos pasó de $32.838 M a $26.654 M de sep-26 (−18,8%). La caída se repite en los tres universos; en dólares sube porque el tipo de cambio aumentó menos que la inflación.</p></div>
+  <div class="panel">
+    <div class="controls">
+      <div class="ctl"><span class="lbl" id="cu-l">Universo</span><div class="seg" id="cuniv" role="group" aria-labelledby="cu-l">
+        <button data-k="ddjj" aria-pressed="false">Concesionarios y permisionarios</button><button data-k="pt" aria-pressed="true">Prestadores turísticos</button><button data-k="all_ex" aria-pressed="false">Todos los pagos</button></div></div>
+    </div>
+    <div class="grid">
+      <div class="chartcard"><div class="chart-head"><h3 class="chart-title" id="c-title"></h3><span class="chart-unit"><i class="sw" style="background:var(--bar)"></i>Mensual · <i class="sw" style="background:var(--amber);height:3px;vertical-align:3px"></i>Media móvil de 3 meses</span></div><div class="chart" id="cchart"></div></div>
+      <aside class="serbox"><div class="lbl">Series · dependencias</div><div class="serlist" id="cser"></div><p class="hint">Clic en una dependencia para abrir su serie; clic de nuevo vuelve al total. Valores del ciclo oct 25–sep 26.</p></aside>
+    </div>
+    <div class="cycbox" id="ccyc"></div>
+  </div>
+  <div class="stack">
+    <div class="panel"><div class="panel-head"><h3 id="cdep-title">Por dependencia</h3></div><div class="tablebox"><table id="cdeps"></table></div></div>
+    <div class="panel"><div class="panel-head"><h3>Principales pagadores · prestadores turísticos</h3></div><div class="tablebox"><table id="crs"></table></div>
+    <p class="note">Iguazú Argentina S.A. aporta el 29,1% y los diez primeros, el 86,7%. Ocho de los diez pagan menos que en oct 23–sep 24.</p></div>
+  </div>
+</section>
+
+<section class="sec" id="deuda">
+  <div class="sec-head"><div class="eyebrow">3 · Deuda exigible al 30/09/2026</div><h2>Deuda reciente, concentrada y mayormente de no habilitados</h2>
+  <p>La deuda de prestadores suma $1.545,9 M brutos y $1.379,0 M netos de pagos a cuenta, entre 3.931 deudores de 34 dependencias. Se expresa en pesos nominales al cierre o en dólares a $1.550.</p></div>
+  <div class="two">
+    <div class="panel"><div class="panel-head"><h3>Composición</h3></div><div class="tablebox"><table id="dkpi"></table></div>
+      <p class="note">Todos los pagos a cuenta conciliados corresponden a Nahuel Huapi.</p></div>
+    <div class="panel"><div class="panel-head"><h3>El 79,8% del capital se originó en 2025 y 2026</h3><p id="dsub">Capital impago según año de origen del comprobante · $ M nominales · 2026 hasta septiembre</p></div><div class="chart" id="dchart"></div></div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><h3>Por dependencia</h3><p>Cinco dependencias concentran el 92,2% de la deuda.</p></div>
+    <div class="tablebox"><table id="ddeps"></table></div>
+    <button class="more" id="dmore" type="button">Ver las 34 dependencias</button>
+    <p class="note">La suma de deudores por dependencia (3.991) supera el total (3.931) porque 58 deudores tienen saldo en más de una dependencia.</p>
+  </div>
+  <div class="two">
+    <div class="panel"><div class="panel-head"><h3>Diez mayores deudores · 37,0% de la deuda</h3></div><div class="tablebox"><table id="dtop"></table></div></div>
+    <div class="panel"><div class="panel-head"><h3>Concentración por tramo</h3></div><div class="tablebox"><table id="dtram"></table></div>
+      <p class="note">Habilitación vigente: 395 deudores, $422,6 M (27,3%), con intereses del 16,5% de su saldo. Gestión judicial: 43 deudores y 64 comprobantes, $27,0 M (1,7%), con 75,4% de intereses. Ninguno de los diez mayores deudores está en gestión judicial.</p></div>
+  </div>
+</section>
+
+<section class="sec" id="cruzados">
+  <div class="sec-head"><div class="eyebrow">4 · Indicadores cruzados</div><h2>Lanín debe un tercio de su cobranza anual</h2>
+  <p>Para el conjunto de la APN la deuda equivale al 5,8% de la cobranza anual a prestadores. En Lanín llega al 32,8% y en El Palmar, Lago Puelo, Los Alerces y Nahuel Huapi supera el 12%. En Iguazú y Glaciares, donde se concentra la cobranza, es marginal.</p></div>
+  <div class="stack">
+    <div class="panel"><div class="panel-head"><h3>Deuda sobre cobranza a prestadores</h3><p>Deuda al 30/09/2026 sobre cobranza oct 25–sep 26, en %</p></div><div class="chart" id="xchart"></div></div>
+    <div class="panel"><div class="panel-head"><h3>Flujos y stock por dependencia</h3></div><div class="tablebox"><table id="xtab"></table></div>
+      <p class="note">Flujos del ciclo oct 25–sep 26 en la moneda elegida; deuda al cierre. En Lanín y Tierra del Fuego casi toda la deuda es de prestadores sin habilitación vigente.</p></div>
+  </div>
+</section>
+
+<section class="sec" id="conclusiones">
+  <div class="sec-head"><div class="eyebrow">5 · Conclusiones</div><h2>Alertas para la gestión</h2></div>
+  <ol class="concl">
+    <li><b>Tarifas detrás de la inflación.</b> El neto por ticket cayó 12,2% en el último ciclo (26,2% en no residentes); con tickets estables, la recaudación real de accesos bajó 12,5%. Conviene revisar la frecuencia de actualización de la tarifa filtro.</li>
+    <li><b>Peso de las comisiones.</b> Las tercerizadoras retienen el 49,7% de lo percibido, y en Iguazú el 61,7%: un costo equivalente al ingreso neto de la APN.</li>
+    <li><b>Cobranza a prestadores en baja sostenida.</b> −18,8% real en el trienio, explicada sobre todo por Tierra del Fuego (−50,0%) y Glaciares (−28,4%).</li>
+    <li><b>Deuda reciente y fuera de la palanca del permiso.</b> El 79,8% del capital se originó en 2025–2026 y el 72,7% de la deuda es de prestadores sin habilitación vigente. La gestión judicial cubre sólo el 1,7%.</li>
+    <li><b>Focos por dependencia.</b> Lanín (deuda del 32,8% de su cobranza) y Nahuel Huapi (39,8% de la deuda total) concentran el riesgo de cobro. Iguazú y Glaciares sostienen el 69,1% de la cobranza y el 72,4% del neto de accesos.</li>
+    <li><b>Calidad de datos.</b> Los medios de pago electrónicos no se registran desde julio de 2025, las altas de Los Alerces y Casa Central impiden comparar su trienio, y la deuda se mide en pesos nominales mientras los flujos se ajustan por CER.</li>
+  </ol>
+</section>
+
+<section class="sec" id="metodologia">
+  <div class="sec-head"><div class="eyebrow">Metodología</div><h2>Cómo leer estos números</h2></div>
+  <div class="method">
+    <p><b>Ciclos.</b> Doce meses de octubre a septiembre, contados hacia atrás desde el 30/09/2026. «i.a.» compara el último ciclo con el anterior y «trienal», el último con el primero. Si el ciclo base no llega a la décima parte del siguiente, la variación se informa como s/base.</p>
+    <p><b>Moneda.</b> «$ de sep-26» multiplica las unidades CER de los tableros (importe diario dividido por el CER del día) por 840,1, el CER promedio implícito de septiembre de 2026 en los registros. Las variaciones son idénticas a las de los tableros. «Unidades CER» muestra las cifras tal como en los tableros. Dólares: accesos a dólar blue hasta el 12/12/2023 y oficial desde el 13/12/2023; cobranzas a tipo de cambio minorista vendedor del día; deuda a $1.550.</p>
+    <p><b>Universos de cobranza.</b> Concesionarios y permisionarios (42 razones sociales con declaración jurada) ⊂ prestadores turísticos ⊂ todos los pagos. Se excluyen los medios de pago electrónicos, registrados sólo hasta julio de 2025.</p>
+    <p><b>Deuda.</b> Comprobantes con saldo impago (liquidaciones, facturas, multas y notas de débito), con intereses a tasa activa del Banco de la Nación desde el vencimiento, en pesos nominales al 30/09/2026. La antigüedad se mide por el año de origen de los comprobantes hoy impagos y no reconstruye el stock histórico.</p>
+    <p><b>Accesos y cobranzas no se suman.</b> Provienen de sistemas distintos y «todos los pagos» puede incluir importes vinculados a accesos.</p>
+  </div>
+</section>
+
+<footer><b>Fuente.</b> Elaboración consolidada sobre los tableros «Evolución mensual de accesos por dependencia», «Cobranzas · evolución mensual» y «Deuda exigible de prestadores turísticos», de la Dirección Nacional de Uso Público y la Dirección de Concesiones, con información disponible en ReNaRI.</footer>
+</div>
+
+<div class="upd noprint" id="upd" role="status" hidden><span>Hay una versión más reciente del tablero.</span><button type="button" id="upd-btn">Actualizar</button></div>
+<script src="data/datos.js"></script>
+<script>
+const D = window.APN_DATOS;
+(function(){
+"use strict";
+const F=D.F, MON=D.months, CYC=D.cycles, MES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const SEG=[{k:'RP',n:'Residentes',c:'--forest'},{k:'NR',n:'No residentes',c:'--clay'},{k:'NP',n:'Vehículos y adicionales',c:'--stone'}];
+const S={unit:'ars',am:'t',adep:'ALL',acats:{RP:true,NR:true,NP:true},cu:'pt',cdep:'ALL',dAll:false,sort:{}};
+try{const u=localStorage.getItem('apn-unit'); if(u&&['ars','cer','usd'].includes(u)) S.unit=u;}catch(e){}
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const nf=(v,d=0)=>new Intl.NumberFormat('es-AR',{minimumFractionDigits:d,maximumFractionDigits:d}).format(v);
+const pct=(v,d=1)=>v==null?'<span class="na">s/base</span>':`<span class="${v>0.05?'pos':v<-0.05?'neg':''}">${v>0?'+':v<0?'−':''}${nf(Math.abs(v),d)}%</span>`;
+const vr=(a,b)=>(!a||a<b*0.1)?null:(b/a-1)*100;
+const sum=a=>a.reduce((s,x)=>s+x,0);
+const cyc=a=>[0,1,2].map(c=>sum(a.slice(c*12,c*12+12)));
+const add=(a,b)=>a.map((x,i)=>x+b[i]);
+const zeros=()=>new Array(36).fill(0);
+const mesL=i=>{const [y,m]=MON[i].split('-');return MES[+m-1]+' '+y.slice(2)};
+/* moneda: los importes base vienen en unidades CER (o USD) */
+const UN={ars:{lab:'millones de $ de sep-26',short:'$ M sep-26'},cer:{lab:'millones de unidades CER',short:'M u. CER'},usd:{lab:'millones de US$',short:'US$ M'}};
+function money(vCer,vUsd){ return S.unit==='usd'? vUsd/1e6 : S.unit==='cer'? vCer/1e6 : vCer*F/1e6; }
+function mfmt(m){ const a=Math.abs(m); return nf(m, S.unit==='ars'? (a>=1000?0:1) : (a>=100?1:2)); }
+const isMoney=m=>m==='n'||m==='c'||m==='i';
+
+/* ---------- datos de accesos ---------- */
+function accSer(dep,seg,m){
+  const deps = dep==='ALL'? Object.keys(D.acc.data) : [dep];
+  let o=zeros();
+  deps.forEach(d=>{ const x=D.acc.data[d][seg]; let s;
+    if(isMoney(m)){ const c=x[m], u=x[m+'u']; s=c.map((v,i)=>money(v,u[i])); } else s=x[m];
+    o=add(o,s); });
+  return o;
+}
+function accRaw(dep,seg,m){ const deps= dep==='ALL'?Object.keys(D.acc.data):[dep]; let o=zeros(); deps.forEach(d=>{o=add(o,D.acc.data[d][seg][m])}); return o; }
+/* ---------- cobranzas ---------- */
+function cobSer(k,dep){ const deps=D.cob[k].deps; const names= dep==='ALL'?Object.keys(deps):[dep]; let o=zeros();
+  names.forEach(n=>{ if(!deps[n]) return; o=add(o, deps[n].cer.map((v,i)=>money(v,deps[n].usd[i]))); }); return o; }
+
+/* ---------- utilidades de gráfico ---------- */
+function niceMax(v){ if(v<=0) return 1; const p=Math.pow(10,Math.floor(Math.log10(v))); const f=v/p; const n=[1,1.2,1.5,2,2.5,3,4,5,6,8,10].find(x=>f<=x); return n*p; }
+function el(tag,attrs,parent){ const e=document.createElementNS('http://www.w3.org/2000/svg',tag); for(const k in attrs) e.setAttribute(k,attrs[k]); if(parent) parent.appendChild(e); return e; }
+function tipFor(box){ let t=box.querySelector('.tip'); if(!t){ t=document.createElement('div'); t.className='tip'; box.appendChild(t);} return t; }
+function placeTip(box,t,ev){ const r=box.getBoundingClientRect(); let x=ev.clientX-r.left+14, y=ev.clientY-r.top+10; if(x+t.offsetWidth>r.width) x=ev.clientX-r.left-t.offsetWidth-14; if(x<0)x=0; t.style.left=x+'px'; t.style.top=y+'px'; }
+function axisFmt(v){ return v>=1e6? nf(v/1e6,v%1e6?1:0)+' M' : v>=1e3? nf(v/1e3,0)+' mil' : nf(v, v<10&&v%1?1:0); }
+
+function monthChart(box,opt){
+  /* opt: stacks [{vals,color,name}] o bars {vals,color} + line {vals,color}; fmt */
+  box.innerHTML=''; const W=Math.max(320,box.clientWidth||900), H=W<560?250:300, L=W<560?44:58, R=10, T=26, B=34;
+  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':opt.aria},box);
+  const n=36, bw=(W-L-R)/n;
+  const tops = opt.stacks? MON.map((_,i)=>sum(opt.stacks.map(s=>s.vals[i]))) : opt.bars.vals;
+  const mx=niceMax(Math.max(...tops, ...(opt.line?opt.line.vals:[0]))*1.05);
+  const y=v=>T+(H-T-B)*(1-v/mx);
+  for(let k=0;k<=4;k++){ const v=mx*k/4; el('line',{x1:L,x2:W-R,y1:y(v),y2:y(v),stroke:css('--grid'),'stroke-dasharray':k?'2 4':''},svg); const t=el('text',{x:L-6,y:y(v)+4,'text-anchor':'end',class:'axis'},svg); t.textContent=opt.axis(v); }
+  [12,24].forEach(i=>{ el('line',{x1:L+i*bw,x2:L+i*bw,y1:T-14,y2:H-B,stroke:css('--ink'),'stroke-dasharray':'5 4',opacity:.45},svg); });
+  CYC.forEach((c,ci)=>{ const t=el('text',{x:L+(ci*12+6)*bw,y:T-12,'text-anchor':'middle',class:'axis','font-style':'italic'},svg); t.textContent=W<560?c.replace('oct ','').replace('sep ',''):c; });
+  const stp=W<560?6:3; for(let i=0;i<n;i+=stp){ const t=el('text',{x:L+i*bw+bw/2,y:H-B+16,'text-anchor':'middle',class:'axis'},svg); t.textContent=mesL(i); }
+  const g=el('g',{},svg);
+  for(let i=0;i<n;i++){
+    let acc=0; const x=L+i*bw+bw*0.12, w=bw*0.76;
+    if(opt.stacks) opt.stacks.forEach(s=>{ const v=s.vals[i]; if(v>0){ el('rect',{x,y:y(acc+v),width:w,height:Math.max(0,y(acc)-y(acc+v)),fill:css(s.color)},g);} acc+=v; });
+    else el('rect',{x,y:y(Math.max(0,opt.bars.vals[i])),width:w,height:Math.max(0,y(0)-y(Math.max(0,opt.bars.vals[i]))),fill:css(opt.bars.color)},g);
+  }
+  if(opt.line){ const pts=opt.line.vals.map((v,i)=>v==null?null:[L+i*bw+bw/2,y(v)]).filter(Boolean); el('polyline',{points:pts.map(p=>p.join(',')).join(' '),fill:'none',stroke:css(opt.line.color),'stroke-width':2.4,'stroke-linejoin':'round'},svg); }
+  const hl=el('rect',{x:0,y:T,width:bw,height:H-T-B,fill:css('--ink'),opacity:0},svg);
+  const tip=tipFor(box);
+  const hit=el('rect',{x:L,y:T,width:W-L-R,height:H-T-B,fill:'transparent'},svg);
+  hit.addEventListener('pointermove',ev=>{ const r=svg.getBoundingClientRect(); const px=(ev.clientX-r.left)*W/r.width; const i=Math.min(n-1,Math.max(0,Math.floor((px-L)/bw)));
+    hl.setAttribute('x',L+i*bw); hl.setAttribute('opacity',.07); tip.innerHTML=opt.tip(i); tip.classList.add('on'); placeTip(box,tip,ev); });
+  hit.addEventListener('pointerleave',()=>{ tip.classList.remove('on'); hl.setAttribute('opacity',0); });
+}
+
+/* ---------- KPIs ---------- */
+function totalsAcc(m){ return cyc(sum4(SEG.map(s=>accSer('ALL',s.k,m)))); }
+function sum4(arrs){ return arrs.reduce((a,b)=>add(a,b),zeros()); }
+function renderKPIs(){
+  const u=UN[S.unit].short;
+  const k=[
+    {h:'Ingreso neto de accesos',v:totalsAcc('n'),u},
+    {h:'Comisiones a tercerizadoras',v:totalsAcc('c'),u},
+    {h:'Cobranza a prestadores',v:cyc(cobSer('pt','ALL')),u},
+  ];
+  const pre=S.unit==='usd'?'US$ ':S.unit==='ars'?'$ ':''; const cls=['','com','cob'];
+  let h=k.map((x,i)=>`<div class="kpi ${cls[i]}"><h3>${x.h}</h3><div class="big num">${pre}${mfmt(x.v[2])}${S.unit==='cer'?'<small>M u. CER</small>':' M'}</div>
+    <div class="chg"><span>i.a. ${pct(vr(x.v[1],x.v[2]))}</span><span>trienal ${pct(vr(x.v[0],x.v[2]))}</span></div>
+    <div class="cyc">${x.v.map((v,i)=>`<span>${CYC[i]}<b>${mfmt(v)}</b></span>`).join('')}</div></div>`).join('');
+  const d=D.deuda, us=S.unit==='usd';
+  const dv=x=>us? nf(x/D.usdDeuda/1e6,2) : nf(x/1e6,1);
+  h+=`<div class="kpi debt"><h3>Deuda exigible al 30/09/2026</h3><div class="big num">${us?'US$ ':'$ '}${dv(d.bruto)} M</div>
+   <div class="chg"><span>Neta <b>${us?'US$ ':'$ '}${dv(d.neto)} M</b></span><span>${us?'a $ 1.550':'nominales'}</span></div>
+   <div class="cyc"><span>Capital<b>${dv(d.cap)}</b></span><span>Intereses<b>${dv(d.int)}</b></span><span>Deudores<b>${nf(d.deudores)}</b></span></div></div>`;
+  document.getElementById('kpis').innerHTML=h;
+  document.getElementById('unitnote').textContent = 'Flujos por ciclo en '+UN[S.unit].lab+(S.unit==='cer'?' (como en los tableros); la deuda, en pesos nominales.':S.unit==='usd'?'; la deuda, a $1.550 por dólar.':'; la deuda, en pesos nominales al cierre.');
+}
+
+/* ---------- tablas ---------- */
+function table(id,cols,rows,opts={}){
+  const t=document.getElementById(id); const st=S.sort[id];
+  let rs=rows.slice();
+  if(st){ const c=cols[st.i]; rs.sort((a,b)=>{ const va=c.sv?c.sv(a):0, vb=c.sv?c.sv(b):0; return st.d*((va??-1e18)-(vb??-1e18)); }); }
+  const tot=opts.total? [opts.total]:[];
+  t.innerHTML=`<thead><tr>${cols.map((c,i)=>`<th ${st&&st.i===i?`aria-sort="${st.d<0?'descending':'ascending'}"`:''}>${c.sv?`<button type="button" data-i="${i}">${c.h}</button>`:c.h}</th>`).join('')}</tr></thead>
+   <tbody>${rs.map(r=>`<tr class="${opts.rowClass?opts.rowClass(r):''}">${cols.map(c=>`<td class="${c.cls||''}">${c.f(r)}</td>`).join('')}</tr>`).join('')}
+   ${tot.map(r=>`<tr class="tot">${cols.map(c=>`<td>${c.f(r)}</td>`).join('')}</tr>`).join('')}</tbody>`;
+  t.querySelectorAll('th button').forEach(b=>b.addEventListener('click',()=>{ const i=+b.dataset.i; const cur=S.sort[id]; S.sort[id]={i,d: cur&&cur.i===i? -cur.d : -1}; opts.redraw(); }));
+}
+
+/* ---------- accesos ---------- */
+const AM={t:'Tickets',d:'Días de visita',n:'Ingreso neto',c:'Comisiones a tercerizadoras',i:'Ingreso teórico'};
+function renderAcc(){
+  const m=S.am, dep=S.adep, money_=isMoney(m);
+  const all=SEG.map(s=>({k:s.k,vals:accSer(dep,s.k,m),color:s.c,name:s.n}));
+  const st=all.filter(s=>S.acats[s.k]);
+  document.getElementById('a-title').textContent=`${AM[m]} por mes · ${dep==='ALL'?'todas las dependencias':dep}`;
+  document.getElementById('a-unit').textContent=money_?UN[S.unit].lab:(m==='t'?'tickets emitidos':'días de visita habilitados');
+  const fv=v=>money_? mfmt(v) : nf(v);
+  const c3=s=>sum(s.vals.slice(24));
+  document.getElementById('aser').innerHTML=all.map(s=>`<button type="button" data-k="${s.k}" aria-pressed="${!!S.acats[s.k]}"><i class="sq" style="background:var(${s.color})"></i>${s.name}<span class="v">${fv(c3(s))}</span></button>`).join('')+`<div class="tot">Total seleccionado<span class="v">${fv(sum(st.map(c3)))}</span></div>`;
+  document.querySelectorAll('#aser button').forEach(b=>b.addEventListener('click',()=>{ const k=b.dataset.k; const on=Object.values(S.acats).filter(Boolean).length; if(S.acats[k]&&on===1) return; S.acats[k]=!S.acats[k]; renderAcc(); }));
+  const f=v=>money_? mfmt(v) : nf(v);
+  monthChart(document.getElementById('achart'),{stacks:st,aria:AM[m]+' por mes',axis:v=>money_? nf(v, v>=100||!v?0:1) : axisFmt(v),
+    tip:i=>`<div class="t">${mesL(i)}</div>${st.map(s=>`<div class="r"><span>${s.name}</span><b>${f(s.vals[i])}</b></div>`).join('')}<div class="r"><span>Total</span><b>${f(sum(st.map(s=>s.vals[i])))}</b></div>`});
+  const rows=st.map(s=>({n:s.name,c:cyc(s.vals)})); const tot={n:'Total',c:[0,1,2].map(i=>sum(rows.map(r=>r.c[i])))};
+  const tk=SEG.filter(s=>S.acats[s.k]).map(s=>cyc(accRaw(dep,s.k,'t'))); const tkt=[0,1,2].map(i=>sum(tk.map(r=>r[i])));
+  const v2=(c,base)=> base && base[0]<base[2]*0.1? null : vr(c[0],c[2]);
+  table('acyc',[{h:money_?`${AM[m]} (${UN[S.unit].short})`:AM[m],f:r=>r.n},...CYC.map((c,i)=>({h:c,f:r=>f(r.c[i])})),{h:'Var. i.a.',f:r=>pct(vr(r.c[1],r.c[2]))},{h:'Var. trienal',f:r=>pct(r===tot? (tkt[0]<tkt[2]*0.1?null:vr(r.c[0],r.c[2])) : vr(r.c[0],r.c[2]))}],rows,{total:tot,redraw:renderAcc});
+  /* tabla por dependencia */
+  const dr=Object.keys(D.acc.data).map(d=>{ const t=cyc(sum4(SEG.map(s=>D.acc.data[d][s.k].t))); const n=cyc(sum4(SEG.map(s=>accSer(d,s.k,'n')))); const nc=cyc(sum4(SEG.map(s=>D.acc.data[d][s.k].n))), cc=cyc(sum4(SEG.map(s=>D.acc.data[d][s.k].c)));
+    const nr=cyc(D.acc.data[d].NR.t); return {d,t,n,nc,cc,nr}; }).filter(r=>r.t[2]>0);
+  const totN=sum(dr.map(r=>r.n[2]));
+  const per=r=>r.n[2]*1e6/r.t[2]*(S.unit==='ars'?1:1);
+  table('adeps',[
+    {h:'Dependencia',f:r=>r.d},
+    {h:'Tickets',f:r=>nf(r.t[2]),sv:r=>r.t[2]},
+    {h:'Var. i.a.',f:r=>pct(vr(r.t[1],r.t[2])),sv:r=>vr(r.t[1],r.t[2])},
+    {h:`Neto (${UN[S.unit].short})`,f:r=>mfmt(r.n[2]),sv:r=>r.n[2]},
+    {h:'Var. i.a.',f:r=>pct(vr(r.n[1],r.n[2])),sv:r=>vr(r.n[1],r.n[2])},
+    {h:'Var. trienal',f:r=>pct(vr(r.n[0],r.n[2])),sv:r=>vr(r.n[0],r.n[2])},
+    {h:'Part.',f:r=>nf(r.n[2]/totN*100,1)+'%',sv:r=>r.n[2]},
+    {h:'No resid.',f:r=>nf(r.nr[2]/r.t[2]*100,1)+'%',sv:r=>r.nr[2]/r.t[2]},
+    {h:S.unit==='usd'?'Neto/ticket (US$)':S.unit==='cer'?'Neto/ticket (u. CER)':'Neto/ticket ($)',f:r=>nf(per(r),S.unit==='ars'?0:2),sv:r=>per(r)},
+    {h:'Comisión/ percibido',f:r=>{const c=r.cc[2]/(r.cc[2]+r.nc[2])*100; return c>=0.05? nf(c,1)+'%':'—'},sv:r=>r.cc[2]/(r.cc[2]+r.nc[2])}
+  ],dr.sort((a,b)=>b.n[2]-a.n[2]),{redraw:renderAcc});
+}
+
+/* ---------- cobranzas ---------- */
+function renderCob(){
+  const k=S.cu, deps=D.cob[k].deps;
+  if(S.cdep!=='ALL'&&!deps[S.cdep]) S.cdep='ALL';
+  const pal=['--forest','--clay','--forest-2','--amber','--stone','--muted','--forest','--clay','--forest-2','--amber'];
+  const dl=Object.keys(deps).map((n,i)=>({n,v:sum(cobSer(k,n).slice(24)),c:pal[i%pal.length]}));
+  document.getElementById('cser').innerHTML=dl.map(x=>`<button type="button" data-n="${x.n}" class="${S.cdep===x.n?'on':''}" aria-pressed="${S.cdep==='ALL'||S.cdep===x.n}"><i class="sq" style="background:var(${S.cdep===x.n?'--forest':'--bar'})"></i>${x.n}<span class="v">${mfmt(x.v)}</span></button>`).join('')+`<div class="tot">Total del universo<span class="v">${mfmt(sum(dl.map(x=>x.v)))}</span></div>`;
+  document.querySelectorAll('#cser button').forEach(b=>b.addEventListener('click',()=>{ S.cdep= S.cdep===b.dataset.n?'ALL':b.dataset.n; renderCob(); }));
+  const v=cobSer(k,S.cdep); const mm=v.map((x,i)=>i<2?null:(v[i]+v[i-1]+v[i-2])/3);
+  document.getElementById('c-title').textContent=`${D.cob[k].label} · ${S.cdep==='ALL'?'todas las dependencias':S.cdep}`;
+  monthChart(document.getElementById('cchart'),{bars:{vals:v,color:S.cdep==='ALL'?'--bar':'--forest-2'},line:{vals:mm,color:'--amber'},aria:'Cobranza mensual',axis:v=>nf(v,v>=100||!v?0:1),
+    tip:i=>`<div class="t">${mesL(i)}</div><div class="r"><span>Mensual</span><b>${mfmt(v[i])}</b></div>${mm[i]!=null?`<div class="r"><span>Media 3 meses</span><b>${mfmt(mm[i])}</b></div>`:''}`});
+  const c=cyc(v);
+  document.getElementById('ccyc').innerHTML=c.map((x,i)=>`<div>${CYC[i]}<b class="num">${mfmt(x)}</b>${i<2?UN[S.unit].short:`i.a. ${pct(vr(c[1],c[2]))} · trienal ${pct(vr(c[0],c[2]))}`}</div>`).join('');
+  document.getElementById('cdep-title').textContent='Por dependencia · '+D.cob[k].label.toLowerCase();
+  const rows=Object.keys(deps).map(n=>({n,c:cyc(cobSer(k,n))})); const tot=[0,1,2].map(i=>sum(rows.map(r=>r.c[i])));
+  table('cdeps',[{h:'Dependencia',f:r=>r.n},...CYC.map((h,i)=>({h,f:r=>mfmt(r.c[i]),sv:r=>r.c[i]})),{h:'Var. i.a.',f:r=>pct(vr(r.c[1],r.c[2])),sv:r=>vr(r.c[1],r.c[2])},{h:'Var. trienal',f:r=>pct(vr(r.c[0],r.c[2])),sv:r=>vr(r.c[0],r.c[2])},{h:'Part.',f:r=>nf(r.c[2]/tot[2]*100,1)+'%',sv:r=>r.c[2]}],
+    rows,{total:{n:'Total',c:tot},redraw:renderCob});
+  const rr=D.rs.map(r=>({n:r.n,c:cyc(r.cer.map((x,i)=>money(x,r.usd[i])))})); const rt=sum(rr.map(r=>r.c[2]));
+  table('crs',[{h:'Razón social',f:r=>r.n},{h:`${CYC[2]} (${UN[S.unit].short})`,f:r=>mfmt(r.c[2]),sv:r=>r.c[2]},{h:'Var. i.a.',f:r=>pct(vr(r.c[1],r.c[2])),sv:r=>vr(r.c[1],r.c[2])},{h:'Var. trienal',f:r=>pct(vr(r.c[0],r.c[2])),sv:r=>vr(r.c[0],r.c[2])},{h:'Part.',f:r=>nf(r.c[2]/rt*100,1)+'%',sv:r=>r.c[2]}],rr,{redraw:renderCob});
+}
+
+/* ---------- deuda ---------- */
+function renderDeuda(){
+  const d=D.deuda, us=S.unit==='usd'; const dv=(x,dec=1)=> us? nf(x/D.usdDeuda/1e6,dec+1) : nf(x/1e6,dec); const uh=us?'US$ M':'$ M';
+  const B=d.bruto;
+  table('dkpi',[{h:'Concepto',f:r=>r.n},{h:uh,f:r=>(r.v<0?'−':'')+dv(Math.abs(r.v))},{h:'% de la bruta',f:r=>(r.v<0?'−':'')+nf(Math.abs(r.v)/B*100,1)+'%'}],
+    [{n:'Capital',v:d.cap},{n:'Intereses devengados',v:d.int},{n:'Deuda bruta',v:d.bruto},{n:'Pagos a cuenta conciliados',v:-d.pac},{n:'Deuda neta',v:d.neto}],{redraw:renderDeuda,rowClass:r=>/Deuda/.test(r.n)?'tot':''});
+  /* antigüedad */
+  const box=document.getElementById('dchart'); box.innerHTML='';
+  const W=Math.max(300,box.clientWidth||500), H=270, L=8, R=8, T=40, Bm=24; const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'Capital impago por año de origen'},box);
+  const vals=d.origen.map(x=> us? x/D.usdDeuda/1e6 : x/1e6), tot=sum(d.origen); const mx=Math.max(...vals); const bw=(W-L-R)/vals.length;
+  const y=v=>T+(H-T-Bm)*(1-v/mx);
+  el('line',{x1:L,x2:W-R,y1:H-Bm,y2:H-Bm,stroke:css('--ink'),opacity:.6},svg);
+  vals.forEach((v,i)=>{ const isN=i>=vals.length-2, x=L+i*bw+bw*0.14, w=bw*0.72;
+    el('rect',{x,y:y(v),width:w,height:Math.max(.8,H-Bm-y(v)),fill:css(isN?'--forest':'--bar')},svg);
+    const big=d.origen[i]/tot>0.03;
+    if(big){ const t=el('text',{x:x+w/2,y:y(v)-18,'text-anchor':'middle',class:'lbl-strong','font-size':bw<44?10:11.5},svg); t.textContent=nf(v,us?2:0);
+      const t2=el('text',{x:x+w/2,y:y(v)-5,'text-anchor':'middle',class:'axis'},svg); t2.textContent=nf(d.origen[i]/tot*100,1)+'%'; }
+    const lb=el('text',{x:x+w/2,y:H-Bm+15,'text-anchor':'middle',class:'axis'},svg); lb.textContent= W<620? d.years[i].replace(' (a sep)','').replace(/^20/,"'") : d.years[i].replace(' (a sep)',''); });
+  document.getElementById('dsub').textContent='Capital impago según año de origen del comprobante · '+(us?'US$ M a $1.550':'$ M nominales')+' · 2026 hasta septiembre';
+  /* por dependencia */
+  const rows=d.dep.map(r=>({...r,t:r.cap+r.int}));
+  const vis=S.dAll?rows:rows.slice(0,10);
+  table('ddeps',[{h:'Dependencia',f:r=>r.n},{h:'Capital',f:r=>dv(r.cap),sv:r=>r.cap},{h:'Intereses',f:r=>dv(r.int),sv:r=>r.int},{h:`Total (${uh})`,f:r=>dv(r.t),sv:r=>r.t},{h:'Part.',f:r=>nf(r.t/B*100,1)+'%',sv:r=>r.t},{h:'Deudores',f:r=>nf(r.deud),sv:r=>r.deud},{h:'Comprob.',f:r=>nf(r.comp),sv:r=>r.comp},{h:'Habilitados',f:r=>dv(r.act),sv:r=>r.act},{h:'Judicial',f:r=>dv(r.gj),sv:r=>r.gj}],
+    vis,{total:{n:'Total 34 dependencias',cap:d.cap,int:d.int,t:B,deud:d.deudores,comp:d.comprob,act:d.act.monto,gj:d.gj.monto},redraw:renderDeuda});
+  document.getElementById('dmore').textContent=S.dAll?'Ver sólo las diez primeras':'Ver las 34 dependencias';
+  table('dtop',[{h:'Deudor',f:r=>r.n},{h:'Dependencia',f:r=>r.dep},{h:uh,f:r=>dv(r.m),sv:r=>r.m},{h:'%',f:r=>nf(r.m/B*100,1)+'%',sv:r=>r.m},{h:'Habilitación',f:r=>`<span class="pill ${r.act?'si':'no'}">${r.act?'Vigente':'No'}</span>`,cls:'tag'}],d.top10,{redraw:renderDeuda});
+  table('dtram',[{h:'Tramo por deudor',f:r=>r.t},{h:'Deudores',f:r=>nf(r.n)},{h:uh,f:r=>dv(r.m)},{h:'%',f:r=>nf(r.m/B*100,1)+'%'}],d.tramos,{redraw:renderDeuda});
+}
+
+/* ---------- cruzados ---------- */
+function renderX(){
+  const d=D.deuda; const deps=['Lanín','El Palmar','Lago Puelo','Los Alerces','Nahuel Huapi','Tierra del Fuego','Glaciares','Iguazú','Talampaya'];
+  const rows=deps.map(n=>{ const dd=d.dep.find(x=>x.n===n); const cp=D.cob.pt.deps[n]; const cobC=sum(cp.cer.slice(24))*F/1e6; let ac=D.acc.data[n]?cyc(sum4(SEG.map(s=>accSer(n,s.k,'n'))))[2]:null; if(!ac) ac=null;
+    return {n,deuda:(dd.cap+dd.int)/1e6,cobC,cob:cyc(cobSer('pt',n))[2],acc:ac,ints:dd.int/(dd.cap+dd.int)*100,act:dd.act/(dd.cap+dd.int)*100}; });
+  const rt=d.bruto/1e6/(sum(Object.values(D.cob.pt.deps).map(x=>sum(x.cer.slice(24))))*F/1e6)*100;
+  const box=document.getElementById('xchart'); box.innerHTML='';
+  const W=Math.max(300,box.clientWidth||500), rh=28, T=26, H=T+rows.length*rh+8, Lb=W<480?104:130, R=46; const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'Deuda sobre cobranza a prestadores por dependencia'},box);
+  const mx=35, sx=v=>Lb+(W-Lb-R)*v/mx;
+  rows.forEach((r,i)=>{ const v=r.deuda/r.cobC*100, yy=T+i*rh;
+    const t=el('text',{x:0,y:yy+15,class:'axis'},svg); t.textContent=r.n; t.setAttribute('style','fill:var(--ink)');
+    el('rect',{x:Lb,y:yy+4,width:Math.max(1,sx(v)-Lb),height:rh-10,fill:css(v>rt*2?'--clay':'--bar')},svg);
+    const vt=el('text',{x:sx(v)+6,y:yy+15,class:'lbl-strong'},svg); vt.textContent=nf(v,1)+'%'; });
+  el('line',{x1:sx(rt),x2:sx(rt),y1:T-8,y2:H-4,stroke:css('--ink'),'stroke-dasharray':'4 3',opacity:.7},svg);
+  const rl=el('text',{x:sx(rt)+4,y:T-12,class:'axis'},svg); rl.textContent='Total APN '+nf(rt,1)+'%';
+  const us=S.unit==='usd';
+  table('xtab',[{h:'Dependencia',f:r=>r.n},{h:`Neto accesos (${UN[S.unit].short})`,f:r=>r.acc==null?'—':mfmt(r.acc),sv:r=>r.acc},{h:`Cobranza prest. (${UN[S.unit].short})`,f:r=>mfmt(r.cob),sv:r=>r.cob},{h:us?'Deuda (US$ M)':'Deuda ($ M)',f:r=>us?nf(r.deuda/D.usdDeuda,2):nf(r.deuda,1),sv:r=>r.deuda},{h:'Intereses / deuda',f:r=>nf(r.ints,1)+'%',sv:r=>r.ints},{h:'Habilitados / deuda',f:r=>nf(r.act,1)+'%',sv:r=>r.act}],rows,{redraw:renderX});
+}
+
+/* ---------- controles ---------- */
+function setPressed(grp,attr,val){ document.querySelectorAll(`#${grp} button`).forEach(b=>b.setAttribute('aria-pressed',String(b.dataset[attr]===val))); }
+function renderAll(){ setPressed('unit','u',S.unit); renderKPIs(); renderAcc(); renderCob(); renderDeuda(); renderX(); }
+document.querySelectorAll('#unit button').forEach(b=>b.addEventListener('click',()=>{ S.unit=b.dataset.u; try{localStorage.setItem('apn-unit',S.unit)}catch(e){} renderAll(); }));
+document.querySelectorAll('#amet button').forEach(b=>b.addEventListener('click',()=>{ S.am=b.dataset.m; setPressed('amet','m',S.am); renderAcc(); }));
+document.querySelectorAll('#cuniv button').forEach(b=>b.addEventListener('click',()=>{ S.cu=b.dataset.k; setPressed('cuniv','k',S.cu); renderCob(); }));
+const ad=document.getElementById('adep');
+ad.innerHTML=['ALL',...Object.keys(D.acc.data).filter(d=>sum(SEG.map(s=>sum(D.acc.data[d][s.k].t)))>1000).sort((a,b)=>a.localeCompare(b,'es'))].map(o=>`<option value="${o}">${o==='ALL'?'Todas las dependencias':o}</option>`).join('');
+ad.addEventListener('change',()=>{ S.adep=ad.value; renderAcc(); });
+document.getElementById('dmore').addEventListener('click',()=>{ S.dAll=!S.dAll; renderDeuda(); });
+let rz; window.addEventListener('resize',()=>{ clearTimeout(rz); rz=setTimeout(()=>{renderAcc();renderCob();renderDeuda();renderX();},150); });
+if(window.matchMedia){ const mq=window.matchMedia('(prefers-color-scheme: dark)'); mq.addEventListener&&mq.addEventListener('change',renderAll); }
+new MutationObserver(renderAll).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+if(new URLSearchParams(location.search).has('print')||window.__PRINT__) S.dAll=true;
+renderAll();
+})();
+</script>
+<script>
+/* PWA: el service worker guarda la app para usarla sin conexión y avisa cuando hay una versión nueva. */
+(function(){
+  if(!('serviceWorker' in navigator) || !/^https?:$/.test(location.protocol)) return;
+  var upd=document.getElementById('upd'), btn=document.getElementById('upd-btn'), waiting=null, reloading=false;
+  function show(w){ waiting=w; upd.hidden=false; requestAnimationFrame(function(){ upd.classList.add('on'); }); }
+  btn.addEventListener('click',function(){ if(waiting) waiting.postMessage('SKIP_WAITING'); });
+  navigator.serviceWorker.addEventListener('controllerchange',function(){ if(reloading) return; reloading=true; location.reload(); });
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('sw.js').then(function(reg){
+      if(reg.waiting && navigator.serviceWorker.controller) show(reg.waiting);
+      reg.addEventListener('updatefound',function(){
+        var nw=reg.installing; if(!nw) return;
+        nw.addEventListener('statechange',function(){ if(nw.state==='installed' && navigator.serviceWorker.controller) show(nw); });
+      });
+      setInterval(function(){ reg.update(); }, 60*60*1000);
+    }).catch(function(){});
+  });
+})();
+</script>
+
+</body>
+</html>
