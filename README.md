@@ -10,7 +10,7 @@ Es una aplicación web progresiva (PWA): se abre en cualquier navegador, se inst
 ├── index.html                  Tablero (la app)
 ├── manifest.webmanifest        Manifiesto de la PWA: nombre, íconos, colores
 ├── sw.js                       Service worker: uso sin conexión y aviso de versión nueva
-├── data/datos.js               Datos del tablero
+├── data/datos.js               Datos del tablero y geometría del mapa de dependencias
 ├── icons/                      Logo e íconos de la app
 ├── informe/                    Tablero de control en PDF (24 láminas)
 ├── descargas/                  Tablero en un único archivo HTML descargable, con el PDF adentro

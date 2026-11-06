@@ -21,17 +21,18 @@
   --paper:#EDE7DA; --panel:#E4DCC9; --panel-2:#E9E1CE; --ink:#22271F; --muted:#5F5C50;
   --line:#C3B79C; --forest:#2C4A34; --forest-2:#3E6B49; --amber:#C8801F; --clay:#A6472B; --stone:#8A8572;
   --on-forest:#F3EEE2; --tip-bg:#22271F; --tip-fg:#EDE7DA; --bar:#B9AE93; --grid:#D3C8AF;
+  --sea:#D4DED9; --land:#F3EEE3; --nb:#E3DDCE; --nb-line:#C9C0AA; --prov-line:#C9BEA4; --heat0:#E6DECB; --heat-na:#D6D0C1;
   --font:'Archivo',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
   --display:'Archivo',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --paper:#171B15; --panel:#20261D; --panel-2:#262D22; --ink:#E7E1D3; --muted:#A8A394;
   --line:#3C4536; --forest:#8DBB98; --forest-2:#A6CDAE; --amber:#E0A54E; --clay:#DD8A6C; --stone:#A29D8A;
-  --on-forest:#14180F; --tip-bg:#E7E1D3; --tip-fg:#171B15; --bar:#5A604F; --grid:#2E3529; color-scheme:dark}}
+  --on-forest:#14180F; --tip-bg:#E7E1D3; --tip-fg:#171B15; --bar:#5A604F; --grid:#2E3529; --sea:#0F1917; --land:#242B21; --nb:#1A1F17; --nb-line:#30382B; --prov-line:#3F4939; --heat0:#323A2D; --heat-na:#272C23; color-scheme:dark}}
 :root[data-theme="dark"]{
   --paper:#171B15; --panel:#20261D; --panel-2:#262D22; --ink:#E7E1D3; --muted:#A8A394;
   --line:#3C4536; --forest:#8DBB98; --forest-2:#A6CDAE; --amber:#E0A54E; --clay:#DD8A6C; --stone:#A29D8A;
-  --on-forest:#14180F; --tip-bg:#E7E1D3; --tip-fg:#171B15; --bar:#5A604F; --grid:#2E3529; color-scheme:dark}
+  --on-forest:#14180F; --tip-bg:#E7E1D3; --tip-fg:#171B15; --bar:#5A604F; --grid:#2E3529; --sea:#0F1917; --land:#242B21; --nb:#1A1F17; --nb-line:#30382B; --prov-line:#3F4939; --heat0:#323A2D; --heat-na:#272C23; color-scheme:dark}
 *{box-sizing:border-box}
 html,body{background:var(--paper);color:var(--ink)}
 body{font-family:var(--font);font-size:14.5px;line-height:1.5;-webkit-font-smoothing:antialiased;padding-inline:clamp(16px,4vw,48px);padding-block:0 64px;overflow-x:hidden}
@@ -207,6 +208,61 @@ nav.toc a.pdf-link{color:var(--forest)}
 .src span{font-size:12px;color:var(--muted)}
 .src b::after{content:" ↗";font-weight:400}
 .sec-link{justify-self:start;font-size:12.5px;font-weight:600;color:var(--forest);text-decoration:none;border-bottom:1.5px solid var(--amber)}
+/* mapa de dependencias: mapa geolocalizado, ficha, mapa de árbol y calor mensual */
+.mapgrid{display:grid;grid-template-columns:minmax(280px,400px) minmax(0,1fr);gap:22px;align-items:start}
+@media(max-width:860px){.mapgrid{grid-template-columns:minmax(0,1fr)}.mapcard{max-width:440px;width:100%;justify-self:center}}
+.mapcard{background:var(--sea);border:1px solid var(--line);border-radius:3px;min-width:0;display:grid;overflow:hidden}
+.mapcard .hint{padding:8px 12px 10px;background:var(--panel-2);border-top:1px solid var(--line)}
+.geo{position:relative}
+.geo svg{display:block;width:100%;height:auto}
+.geo .pt{cursor:pointer;outline:none}
+.geo .pt:focus-visible .dot{stroke:var(--amber);stroke-width:3;stroke-opacity:1}
+.geo-lab{font:italic 11px var(--font);fill:var(--muted);letter-spacing:.04em;pointer-events:none}
+.geo-pais{font-style:normal;font-weight:700;font-size:9.5px;letter-spacing:.2em;opacity:.85}
+.geo-isla{font-size:9.5px}
+.geo-name{font:700 11px var(--font);fill:var(--ink);paint-order:stroke;stroke:var(--land);stroke-width:3px;stroke-linejoin:round;pointer-events:none}
+#mgridwrap[hidden],#mgridnote[hidden]{display:none}
+.mside{display:grid;gap:18px;min-width:0;align-content:start}
+.ficha{background:var(--panel-2);border:1px solid var(--line);border-top:3px solid var(--forest);border-radius:3px;padding:14px 16px 16px;display:grid;gap:12px;min-width:0;scroll-margin-top:72px}
+.ficha .eyebrow{color:var(--amber)}
+.ficha h3{font-size:23px;font-weight:800;color:var(--forest);font-stretch:90%;line-height:1.1}
+.ficha .prov{font-size:12.5px;color:var(--muted)}
+.fgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 18px}
+@media(max-width:420px){.fgrid{grid-template-columns:minmax(0,1fr)}}
+.fs{display:grid;gap:2px;border-top:1px dashed var(--line);padding-top:7px;min-width:0;align-content:start}
+.fs span{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.fs b{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.2}
+.fs em{font-style:normal;font-size:12px;color:var(--muted)}
+.fs.on{border-top:2px solid var(--amber)}
+.fstrip{display:grid;gap:4px}
+.fstrip .lbl{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.strip{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:2px}
+.strip div{height:30px;border-radius:2px;display:grid;place-items:center;font-size:9.5px;font-weight:700;font-variant-numeric:tabular-nums;overflow:hidden}
+@media(max-width:520px){.strip div{font-size:8px;letter-spacing:-.02em}}
+.strip-m{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:2px;font-size:9.5px;color:var(--muted);text-align:center}
+.flinks{display:flex;flex-wrap:wrap;gap:8px 18px}
+.flinks button{appearance:none;font:600 12.5px var(--font);color:var(--forest);background:transparent;border:0;border-bottom:1.5px solid var(--amber);padding:2px 0;cursor:pointer}
+.flinks button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.mleg{display:grid;gap:4px;min-width:min(100%,260px)}
+.mleg .bar{height:10px;border-radius:2px;border:1px solid var(--line)}
+.mleg .ticks{display:flex;justify-content:space-between;gap:6px;font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.mleg .cap{font-size:11.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center}
+.mleg .na-sw{display:inline-block;width:11px;height:11px;border-radius:2px;border:1px solid var(--line);vertical-align:-1px;margin-right:5px}
+#mtree svg{display:block;width:100%;height:auto}
+#mtree .tm{cursor:pointer;outline:none}
+#mtree .tm:focus-visible .box{stroke:var(--amber);stroke-width:3}
+table.hm{font-size:11px;border-collapse:separate;border-spacing:2px}
+table.hm th,table.hm td{border-bottom:0;padding:0}
+table.hm thead th{font-size:9.5px;letter-spacing:.06em;padding:0 2px 4px;text-align:center;border-bottom:0}
+table.hm thead th:first-child{text-align:left}
+table.hm td.c{min-width:46px;height:28px;text-align:center;font-weight:700;border-radius:2px}
+table.hm td.tot{min-width:58px;outline:1.5px solid var(--ink);outline-offset:-1.5px}
+table.hm td:first-child{padding-right:8px}
+table.hm td:first-child button{all:unset;cursor:pointer;font-size:12.5px;font-weight:600;color:var(--ink);border-bottom:1.5px solid transparent}
+table.hm td:first-child button:hover{border-bottom-color:var(--amber)}
+table.hm td:first-child button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+table.hm tr.sel td:first-child button{color:var(--forest);font-weight:800;border-bottom-color:var(--amber)}
+@media print{.mapgrid{display:block}.mapcard{max-width:300px;margin:0 auto 12px}.mside>*+*{margin-top:10px}.flinks{display:none}}
 </style>
 
 <style>.upd{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:50;background:var(--tip-bg);color:var(--tip-fg);padding:10px 14px;border-radius:3px;font:500 13px var(--font);display:flex;gap:12px;align-items:center;box-shadow:0 8px 22px rgba(0,0,0,.25);max-width:calc(100% - 32px)}.upd button{font:700 12px var(--font);background:var(--amber);color:#22271F;border:0;border-radius:2px;padding:6px 10px;cursor:pointer}</style>
@@ -241,7 +297,7 @@ nav.toc a.pdf-link{color:var(--forest)}
 </div>
 
 <nav class="toc" aria-label="Secciones">
-  <div class="ctl"><span class="lbl">Secciones</span><div class="links"><a href="#resumen">Resumen</a><a href="#accesos">Accesos</a><a href="#cobranzas">Cobranzas</a><a href="#deuda">Deuda</a><a href="#cruzados">Cruzados</a><a href="#conclusiones">Conclusiones</a><a href="#metodologia">Metodología</a><a class="pdf-link" data-pdf href="informe/Tablero_de_control_APN_nov23-oct26.pdf" target="_blank" rel="noopener">Informe PDF ↗</a></div></div>
+  <div class="ctl"><span class="lbl">Secciones</span><div class="links"><a href="#resumen">Resumen</a><a href="#mapa">Mapa</a><a href="#accesos">Accesos</a><a href="#cobranzas">Cobranzas</a><a href="#deuda">Deuda</a><a href="#cruzados">Cruzados</a><a href="#conclusiones">Conclusiones</a><a href="#metodologia">Metodología</a><a class="pdf-link" data-pdf href="informe/Tablero_de_control_APN_nov23-oct26.pdf" target="_blank" rel="noopener">Informe PDF ↗</a></div></div>
   <div class="ctl"><span class="lbl" id="unit-l">Unidad</span><div class="seg" role="group" aria-labelledby="unit-l" id="unit">
     <button data-u="ars" aria-pressed="true">$ de oct-26</button><button data-u="usd" aria-pressed="false">Dólares</button>
   </div></div>
@@ -256,6 +312,30 @@ nav.toc a.pdf-link{color:var(--forest)}
     <li><b>Cobranzas.</b> La cobranza a prestadores cayó en los tres ciclos (−18,6% en el trienio), con Tierra del Fuego en −52,8% y Glaciares en −27,4%.</li>
     <li><b>Deuda.</b> $1.507,0 M brutos y $1.317,9 M netos (−4,4% frente a septiembre); el 78,9% del capital se originó en 2025–2026. Nahuel Huapi concentra el 42,2% y sólo el 25,8% es de prestadores con habilitación vigente.</li>
   </ul>
+</section>
+
+<section class="sec" id="mapa">
+  <div class="sec-head"><div class="eyebrow">Mapa de dependencias</div><h2>Las áreas protegidas en el mapa</h2>
+  <p>El tamaño de cada círculo y de cada caja es el valor de los últimos 12 meses (nov 25–oct 26). El color es su variación frente a los 12 meses anteriores. En la deuda, el tamaño es el saldo al 31/10/2026 y el color, la parte de prestadores sin habilitación vigente. Al hacer clic en un área se abre su ficha.</p></div>
+  <div class="panel">
+    <div class="controls">
+      <div class="ctl"><span class="lbl" id="mm-l">Medida</span><div class="seg" id="mmet" role="group" aria-labelledby="mm-l">
+        <button data-m="n" aria-pressed="true">Ingreso neto de accesos</button><button data-m="t" aria-pressed="false">Tickets</button><button data-m="cob" aria-pressed="false">Cobranza a prestadores</button><button data-m="deu" aria-pressed="false">Deuda</button></div></div>
+      <div class="ctl"><span class="lbl">Color</span><div class="mleg" id="mleg"></div></div>
+    </div>
+    <div class="mapgrid">
+      <div class="mapcard"><div class="geo" id="mmap"></div><p class="hint" id="mhint"></p></div>
+      <div class="mside">
+        <article class="ficha" id="mficha" aria-live="polite"></article>
+        <div class="chartcard"><div class="chart-head"><h3 class="chart-title" id="mt-title"></h3><span class="chart-unit" id="mt-unit"></span></div><div class="chart" id="mtree"></div></div>
+      </div>
+    </div>
+    <div class="stack" id="mgridwrap">
+      <div class="panel-head"><h3 id="mg-title">Evolución de los últimos 12 meses</h3><p>Variación de cada mes frente al mismo mes del año anterior. La última columna compara los 12 meses completos.</p></div>
+      <div class="tablebox"><table class="hm" id="mgrid"></table></div>
+    </div>
+    <p class="note" id="mgridnote" hidden>La deuda es un saldo al 31/10/2026 y no tiene serie mensual.</p>
+  </div>
 </section>
 
 <section class="sec" id="accesos">
@@ -350,6 +430,7 @@ nav.toc a.pdf-link{color:var(--forest)}
     <p><b>Moneda.</b> «$ de oct-26» son los pesos constantes de los tableros de origen: cada importe diario se multiplica por el cociente entre el CER del 31/10/2026 (862,80) y el CER del día. Dólares: accesos y cobranzas a la cotización de cada día (blue hasta el 12/12/2023 y oficial minorista vendedor desde el 13/12/2023); deuda a la paridad de referencia de $1.550.</p>
     <p><b>Universos de cobranza.</b> Concesionarios y permisionarios (42 razones sociales con declaración jurada) ⊂ prestadores turísticos ⊂ todos los pagos. Se excluyen los medios de pago electrónicos, registrados sólo hasta julio de 2025.</p>
     <p><b>Deuda.</b> Comprobantes vencidos al 31/10/2026 con saldo impago (liquidaciones, facturas, multas y notas de débito), con intereses a tasa activa del Banco de la Nación desde el vencimiento, en pesos nominales. La antigüedad se mide por el año de origen del capital hoy impago y no reconstruye el stock histórico. El cociente deuda/cobranza usa pesos de oct-26; el informe de cobranzas lo calcula en pesos corrientes y obtiene valores algo mayores.</p>
+    <p><b>Mapa.</b> Cada área protegida se ubica en un punto representativo de su jurisdicción y Casa Central, en la sede de la APN en la Ciudad de Buenos Aires. Los límites provinciales provienen de Natural Earth. La cobranza de «Otras dependencias» no tiene ubicación y sólo figura en el mapa de árbol y en la grilla mensual.</p>
     <p><b>Accesos y cobranzas no se suman.</b> Provienen de sistemas distintos y «todos los pagos» puede incluir importes vinculados a accesos.</p>
   </div>
 </section>
@@ -364,7 +445,7 @@ const D = window.D;
 "use strict";
 const F=D.F, MON=D.months, CYC=D.cycles, MES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 const SEG=[{k:'RP',n:'Residentes',c:'--forest'},{k:'NR',n:'No residentes',c:'--clay'},{k:'NP',n:'Vehículos y adicionales',c:'--stone'}];
-const S={unit:'ars',am:'t',adep:'ALL',acats:{RP:true,NR:true,NP:true},cu:'pt',cdep:'ALL',dAll:false,sort:{}};
+const S={unit:'ars',am:'t',adep:'ALL',acats:{RP:true,NR:true,NP:true},cu:'pt',cdep:'ALL',dAll:false,sort:{},mm:'n',msel:null};
 try{const u=localStorage.getItem('apn-unit'); if(u&&['ars','usd'].includes(u)) S.unit=u;}catch(e){}
 const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const nf=(v,d=0)=>new Intl.NumberFormat('es-AR',{minimumFractionDigits:d,maximumFractionDigits:d}).format(v);
@@ -572,9 +653,220 @@ function renderX(){
   table('xtab',[{h:'Dependencia',f:r=>r.n},{h:`Neto accesos (${UN[S.unit].short})`,f:r=>r.acc==null?'—':mfmt(r.acc),sv:r=>r.acc},{h:`Cobranza prest. (${UN[S.unit].short})`,f:r=>mfmt(r.cob),sv:r=>r.cob},{h:us?'Deuda (US$ miles)':'Deuda ($ M)',f:r=>us?nf(r.deuda*1e3/D.usdDeuda,0):nf(r.deuda,1),sv:r=>r.deuda},{h:'Intereses / deuda',f:r=>nf(r.ints,1)+'%',sv:r=>r.ints},{h:'Habilitados / deuda',f:r=>nf(r.act,1)+'%',sv:r=>r.act}],rows,{redraw:renderX});
 }
 
+/* ---------- mapa de dependencias ---------- */
+const GEO=D.geo;
+const MM={n:'Ingreso neto de accesos',t:'Tickets',cob:'Cobranza a prestadores',deu:'Deuda al 31/10/2026'};
+const ACCN=n=>n==='Casa Central'?'Casa Central (pasaportes)':n;
+const onMap=n=>GEO.pts.some(p=>p.n===n);
+function mSeries(m,n){
+  if(m==='n'||m==='t'){ const k=ACCN(n); if(!D.acc.data[k]) return null;
+    return m==='n'? sum4(SEG.map(s=>accSer(k,s.k,'n'))) : sum4(SEG.map(s=>D.acc.data[k][s.k].t)); }
+  if(m==='cob') return D.cob.pt.deps[n]? cobSer('pt',n) : null;
+  return null;
+}
+function debtOf(n){ const r=D.deuda.dep.find(x=>x.n===n); return r?{...r,t:r.cap+r.int}:null; }
+const dMoney=x=> S.unit==='usd'? x/D.usdDeuda/1e3 : x/1e6;
+function mItems(m){
+  const names = m==='cob'? Object.keys(D.cob.pt.deps) : m==='deu'? D.deuda.dep.map(d=>d.n) : Object.keys(D.acc.data).map(k=>k==='Casa Central (pasaportes)'?'Casa Central':k);
+  return names.map(n=>{
+    if(m==='deu'){ const r=debtOf(n); return {n,v:dMoney(r.t),hv:r.t?(1-r.act/r.t)*100:null,s:null}; }
+    const s=mSeries(m,n); const a=sum(s.slice(24)), b=sum(s.slice(12,24));
+    return {n,v:a,hv:vr(b,a),s:s.slice(24),p:s.slice(12,24)};
+  }).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);
+}
+function mFmt(m,v){
+  if(m==='t') return nf(v);
+  const pre=S.unit==='usd'?'US$ ':'$ ';
+  if(m==='deu') return pre+nf(v, v<1?2:v<10?1:0)+(S.unit==='usd'?' mil':' M');
+  return pre+mfmt(v)+' M';
+}
+const mUnit=m=> m==='t'?'tickets emitidos' : m==='deu'? (S.unit==='usd'?'US$ miles a $ 1.550':'$ M nominales') : UN[S.unit].lab;
+
+/* colores del mapa de calor */
+function hexRgb(h){ h=h.replace('#','').trim(); if(h.length===3) h=h.split('').map(c=>c+c).join(''); const n=parseInt(h,16); return [n>>16&255,n>>8&255,n&255]; }
+const mixRgb=(a,b,t)=>a.map((x,i)=>Math.round(x+(b[i]-x)*t));
+const rgbS=c=>`rgb(${c.join(',')})`;
+function lum(c){ const f=v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)}; return .2126*f(c[0])+.7152*f(c[1])+.0722*f(c[2]); }
+const txtOn=c=> lum(c)>0.3? '#22271F' : '#F3EEE2';
+function heat(m,h){
+  const z=hexRgb(css('--heat0'));
+  if(h==null) return hexRgb(css('--heat-na'));
+  if(m==='deu') return mixRgb(z,hexRgb(css('--clay')),Math.min(1,Math.max(0,h/100)));
+  const t=Math.max(-1,Math.min(1,h/40));
+  return t<0? mixRgb(z,hexRgb(css('--clay')),-t) : mixRgb(z,hexRgb(css('--forest-2')),t);
+}
+const vShort=h=> h==null? 's/b' : (h>0.5?'+':h<-0.5?'−':'')+nf(Math.abs(h),0)+'%';
+
+function renderLegend(m){
+  const L=document.getElementById('mleg');
+  if(m==='deu'){
+    const st=[0,25,50,75,100].map(v=>rgbS(heat(m,v)));
+    L.innerHTML=`<div class="bar" style="background:linear-gradient(90deg,${st.join(',')})"></div><div class="ticks"><span>0%</span><span>50%</span><span>100%</span></div><div class="cap">Deuda de prestadores sin habilitación vigente</div>`;
+  } else {
+    const st=[-40,-30,-20,-10,0,10,20,30,40].map(v=>rgbS(heat(m,v)));
+    L.innerHTML=`<div class="bar" style="background:linear-gradient(90deg,${st.join(',')})"></div><div class="ticks"><span>≤ −40%</span><span>−20%</span><span>0</span><span>+20%</span><span>≥ +40%</span></div><div class="cap"><span>Variación nov 25–oct 26 frente a nov 24–oct 25</span><span><i class="na-sw" style="background:${rgbS(heat(m,null))}"></i>s/base</span></div>`;
+  }
+}
+
+function mSelect(n,fromMap){
+  if(!onMap(n)) return;
+  S.msel=n; renderMap();
+  if(fromMap && window.innerWidth<=860){ const f=document.getElementById('mficha'); const rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches; f.scrollIntoView({behavior:rm?'auto':'smooth',block:'start'}); }
+}
+function bindSel(node,n,fromMap){
+  node.addEventListener('click',()=>mSelect(n,fromMap));
+  node.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); mSelect(n,fromMap); } });
+}
+function mTipHtml(m,it,p){
+  const extra = m==='deu'? `<div class="r"><span>Sin habilitación</span><b>${it.hv==null?'—':nf(it.hv,1)+'%'}</b></div>` : `<div class="r"><span>Var. i.a.</span><b>${it.hv==null?'s/base':(it.hv>0?'+':it.hv<0?'−':'')+nf(Math.abs(it.hv),1)+'%'}</b></div>`;
+  return `<div class="t">${it.n}</div>${p?`<div class="r"><span>${p.prov}</span></div>`:''}<div class="r"><span>${m==='deu'?'Deuda':MM[m]}</span><b>${mFmt(m,it.v)}</b></div>${extra}`;
+}
+
+function renderMap(){
+  const m=S.mm, items=mItems(m), byN=Object.fromEntries(items.map(x=>[x.n,x]));
+  if(!S.msel){ const top=items.find(x=>onMap(x.n)); S.msel=top?top.n:GEO.pts[0].n; }
+  setPressed('mmet','m',m);
+  renderLegend(m);
+  /* mapa */
+  const box=document.getElementById('mmap'); box.innerHTML='';
+  const [PX,PY]=GEO.pad, VB=[-PX,-PY,GEO.W+2*PX,GEO.H+2*PY];
+  const svg=el('svg',{viewBox:VB.join(' '),role:'group','aria-label':'Mapa de la Argentina con las áreas protegidas'},box);
+  el('rect',{x:VB[0],y:VB[1],width:VB[2],height:VB[3],fill:css('--sea')},svg);
+  GEO.nb.forEach(c=>el('path',{d:c.d,fill:css('--nb'),stroke:css('--nb-line'),'stroke-width':.7},svg));
+  GEO.prov.forEach(p=>{ const e=el('path',{d:p.d,fill:css('--land'),stroke:css('--prov-line'),'stroke-width':.7,'stroke-linejoin':'round'},svg); const t=el('title',{},e); t.textContent=p.n; });
+  el('path',{d:GEO.pais,fill:'none',stroke:css('--ink'),'stroke-width':1.1,'stroke-linejoin':'round',opacity:.7},svg);
+  el('path',{d:GEO.malv,fill:css('--land'),stroke:css('--ink'),'stroke-width':.8,opacity:.9},svg);
+  if(GEO.ant){ const A=GEO.ant, bx=A.box; el('rect',{x:bx.x,y:bx.y,width:bx.w,height:bx.h,fill:css('--sea'),stroke:css('--ink'),'stroke-width':.8,opacity:1},svg);
+    el('path',{d:A.land,fill:css('--land'),stroke:css('--ink'),'stroke-width':.5,'stroke-opacity':.6},svg); if(A.sg) el('path',{d:A.sg,fill:css('--land'),stroke:css('--ink'),'stroke-width':.5,'stroke-opacity':.6},svg);
+    A.lines.forEach(d=>el('path',{d,fill:'none',stroke:css('--ink'),'stroke-width':.7,'stroke-dasharray':'2 2',opacity:.7},svg));
+    const at=el('text',{x:A.lab.x,y:A.lab.y,'text-anchor':'middle',class:'geo-lab geo-isla'},svg); at.textContent='Antártida Argentina'; }
+  GEO.labels.forEach(l=>{ const t=el('text',{x:l.x,y:l.y,'text-anchor':'middle',class:'geo-lab geo-'+l.k},svg); t.textContent=l.t; });
+  const mapped=items.filter(x=>onMap(x.n)); const vmax=mapped.length?mapped[0].v:1, RM=30;
+  const pts=GEO.pts.map(p=>({...p,it:byN[p.n]||null})).map(p=>({...p,r:p.it?Math.max(3.4,Math.sqrt(p.it.v/vmax)*RM):2.6}))
+    .sort((a,b)=>b.r-a.r);
+  const g=el('g',{},svg), tip=tipFor(box);
+  pts.forEach(p=>{
+    const sel=p.n===S.msel, c=p.it?heat(m,p.it.hv):null;
+    const lab=p.it? `${p.n}: ${mFmt(m,p.it.v)}` : `${p.n}: sin registros en esta medida`;
+    const cg=el('g',{class:'pt',tabindex:0,role:'button','aria-label':lab,'aria-pressed':String(sel)},g);
+    el('circle',{class:'dot',cx:p.x,cy:p.y,r:p.r,fill:p.it?rgbS(c):css('--land'),stroke:css(p.it||sel?'--ink':'--muted'),'stroke-width':sel?2.2:p.it?.9:1,'stroke-opacity':sel?1:.6,'fill-opacity':p.it?.93:1},cg);
+    if(sel) el('circle',{cx:p.x,cy:p.y,r:p.r+4.5,fill:'none',stroke:css('--amber'),'stroke-width':2.2},cg);
+    cg.addEventListener('mousemove',ev=>{ tip.innerHTML=p.it? mTipHtml(m,p.it,p) : `<div class="t">${p.n}</div><div class="r"><span>${p.prov}</span></div><div class="r"><span>Sin registros en esta medida</span></div>`; tip.classList.add('on'); placeTip(box,tip,ev); });
+    cg.addEventListener('mouseleave',()=>tip.classList.remove('on'));
+    bindSel(cg,p.n,true);
+  });
+  /* rótulos: el área elegida y las de mayor valor, sin superponerse */
+  const lg=el('g',{},svg), placed=pts.filter(p=>p.r>9).map(p=>[p.x-p.r,p.y-p.r,p.x+p.r,p.y+p.r,p.n]);
+  const want=[S.msel,...mapped.slice(0,7).map(x=>x.n)].filter((n,i,a)=>a.indexOf(n)===i);
+  want.forEach(n=>{ const p=pts.find(x=>x.n===n); if(!p) return; const w=n.length*6.3+4;
+    const cands=[[p.x+p.r+4,p.y+4,'start'],[p.x-p.r-4,p.y+4,'end'],[p.x,p.y-p.r-6,'middle'],[p.x,p.y+p.r+14,'middle']];
+    for(const [x,y,a] of cands){ const x0=a==='start'?x:a==='end'?x-w:x-w/2; const b=[x0,y-10,x0+w,y+3];
+      if(b[0]<3-PX||b[2]>GEO.W+PX-3||b[1]<3-PY) continue;
+      if(placed.some(q=>q[4]!==n && !(b[2]<q[0]||b[0]>q[2]||b[3]<q[1]||b[1]>q[3]))) continue;
+      placed.push([...b,'#']); const t=el('text',{x,y,'text-anchor':a,class:'geo-name'},lg); t.textContent=n; if(n===S.msel) t.setAttribute('style','fill:var(--forest)'); break; }
+  });
+  const nOff=GEO.pts.length-mapped.length;
+  document.getElementById('mhint').textContent= m==='deu'
+    ? `Círculos proporcionales a la deuda bruta de cada dependencia (${mUnit(m)}).`
+    : `Círculos proporcionales al ${m==='t'?'número de tickets':m==='n'?'ingreso neto':'importe cobrado'} de nov 25–oct 26. ${nOff?`Los puntos vacíos son áreas sin ${m==='cob'?'cobranza a prestadores informada por separado':'venta de accesos registrada'}.`:''}`;
+  renderFicha(); renderTree(items); renderGrid(items);
+}
+
+function renderFicha(){
+  const m=S.mm, n=S.msel, p=GEO.pts.find(x=>x.n===n);
+  const sN=mSeries('n',n), sT=mSeries('t',n), sC=mSeries('cob',n), d=debtOf(n);
+  const stat=(k,lab,s,fmt)=>{ const on=k===m?' on':'';
+    if(!s||sum(s.slice(24))<=0) return `<div class="fs${on}"><span>${lab}</span><b class="na">—</b><em>sin registros en el período</em></div>`;
+    const a=sum(s.slice(24)), b=sum(s.slice(12,24)); return `<div class="fs${on}"><span>${lab}</span><b>${fmt(a)}</b><em>i.a. ${pct(vr(b,a))}</em></div>`; };
+  let deu='';
+  if(d){ const sin=d.t?(1-d.act/d.t)*100:0; const cp=D.cob.pt.deps[n]; const cobC=cp?sum(cp.cer.slice(24))*F:0;
+    deu=`<div class="fs${m==='deu'?' on':''}"><span>Deuda al 31/10/2026</span><b>${mFmt('deu',dMoney(d.t))}</b><em>${nf(sin,1)}% sin habilitación${cobC>0?` · ${nf(d.t/cobC*100,1)}% de la cobranza anual`:''} · ${nf(d.deud)} deudores</em></div>`; }
+  else deu=`<div class="fs${m==='deu'?' on':''}"><span>Deuda al 31/10/2026</span><b class="na">—</b><em>sin deuda registrada</em></div>`;
+  /* franja de los últimos 12 meses en la medida elegida */
+  let strip='';
+  const s=m==='deu'?null:mSeries(m,n);
+  if(m==='deu') strip=`<p class="note">La deuda es un saldo al cierre y no tiene evolución mensual. Las otras medidas muestran los últimos 12 meses.</p>`;
+  else if(!s||sum(s.slice(24))<=0) strip=`<p class="note">Sin registros de ${MM[m].toLowerCase()} en los últimos 12 meses.</p>`;
+  else { const cells=[...Array(12).keys()].map(i=>{ const v=s[24+i], b=s[12+i], h=vr(b,v), c=heat(m,h);
+      return `<div style="background:${rgbS(c)};color:${txtOn(c)}" title="${mesL(24+i)}: ${mFmt(m,v)} · ${h==null?'s/base':(h>0?'+':h<0?'−':'')+nf(Math.abs(h),1)+'%'} frente a ${mesL(12+i)}">${vShort(h)}</div>`; }).join('');
+    strip=`<div class="fstrip"><div class="lbl">${MM[m]} · mes a mes frente al año anterior</div><div class="strip">${cells}</div><div class="strip-m">${[...Array(12).keys()].map(i=>`<span>${MES[(+MON[24+i].split('-')[1])-1]}</span>`).join('')}</div></div>`; }
+  const links=[];
+  if(D.acc.data[ACCN(n)] && [...document.getElementById('adep').options].some(o=>o.value===ACCN(n))) links.push(`<button type="button" data-go="acc">Ver en Accesos</button>`);
+  if(D.cob.pt.deps[n]) links.push(`<button type="button" data-go="cob">Ver en Cobranzas</button>`);
+  if(d) links.push(`<button type="button" data-go="deu">Ver en Deuda</button>`);
+  const f=document.getElementById('mficha');
+  f.innerHTML=`<div><div class="eyebrow">${p.t}</div><h3>${n}</h3><div class="prov">${p.prov}</div></div>
+    <div class="fgrid">${stat('n','Neto de accesos',sN,v=>(S.unit==='usd'?'US$ ':'$ ')+mfmt(v)+' M')}${stat('t','Tickets',sT,v=>nf(v))}${stat('cob','Cobranza a prestadores',sC,v=>(S.unit==='usd'?'US$ ':'$ ')+mfmt(v)+' M')}${deu}</div>
+    ${strip}${links.length?`<div class="flinks noprint">${links.join('')}</div>`:''}`;
+  const go=(id)=>{ const rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches; document.getElementById(id).scrollIntoView({behavior:rm?'auto':'smooth'}); };
+  f.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>{
+    const k=b.dataset.go;
+    if(k==='acc'){ S.adep=ACCN(n); document.getElementById('adep').value=S.adep; renderAcc(); go('accesos'); }
+    if(k==='cob'){ S.cu='pt'; setPressed('cuniv','k','pt'); S.cdep=n; renderCob(); go('cobranzas'); }
+    if(k==='deu'){ const i=D.deuda.dep.findIndex(x=>x.n===n); if(i>=10&&!S.dAll){ S.dAll=true; renderDeuda(); } go('deuda'); }
+  }));
+}
+
+/* mapa de árbol (squarified) */
+function squarify(items,x,y,w,h){
+  const out=[], tot=sum(items.map(i=>i.v)); if(!tot) return out;
+  let rest=items.map(i=>({...i,a:i.v/tot*w*h}));
+  const worst=(row,side)=>{ const s=sum(row.map(r=>r.a)), mx=Math.max(...row.map(r=>r.a)), mn=Math.min(...row.map(r=>r.a)); return Math.max(side*side*mx/(s*s), s*s/(side*side*mn)); };
+  while(rest.length){
+    const side=Math.min(w,h); let row=[rest[0]], i=1;
+    while(i<rest.length && worst([...row,rest[i]],side)<=worst(row,side)){ row.push(rest[i]); i++; }
+    const s=sum(row.map(r=>r.a));
+    if(w>=h){ const cw=s/h; let cy=y; row.forEach(r=>{ const ch=r.a/cw; out.push({...r,x,y:cy,w:cw,h:ch}); cy+=ch; }); x+=cw; w-=cw; }
+    else { const rh=s/w; let cx=x; row.forEach(r=>{ const cw=r.a/rh; out.push({...r,x:cx,y,w:cw,h:rh}); cx+=cw; }); y+=rh; h-=rh; }
+    rest=rest.slice(i);
+  }
+  return out;
+}
+function renderTree(items){
+  const m=S.mm, box=document.getElementById('mtree'); box.innerHTML='';
+  document.getElementById('mt-title').textContent= m==='deu'? 'Deuda por dependencia' : `${MM[m]} por dependencia · últimos 12 meses`;
+  document.getElementById('mt-unit').textContent=mUnit(m);
+  const W=Math.max(300,box.clientWidth||600), H=W<560?420:390;
+  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'group','aria-label':`Mapa de árbol: ${MM[m]} por dependencia`},box);
+  const tip=tipFor(box), tot=sum(items.map(i=>i.v));
+  squarify(items,0,0,W,H).forEach(r=>{
+    const c=heat(m,r.hv), tc=txtOn(c), sel=r.n===S.msel, map=onMap(r.n);
+    const g=el('g',{class:'tm',...(map?{tabindex:0,role:'button','aria-pressed':String(sel)}:{}),'aria-label':`${r.n}: ${mFmt(m,r.v)}`},svg);
+    el('rect',{class:'box',x:r.x+1,y:r.y+1,width:Math.max(0,r.w-2),height:Math.max(0,r.h-2),fill:rgbS(c),stroke:css('--paper'),'stroke-width':2},g);
+    if(sel) el('rect',{x:r.x+3,y:r.y+3,width:Math.max(0,r.w-6),height:Math.max(0,r.h-6),fill:'none',stroke:css('--ink'),'stroke-width':2.2},g);
+    const pad=8, fits=(txt,px)=>txt.length*px*0.58+pad*2<=r.w;
+    if(r.h>=24 && fits(r.n,12.5)){
+      const t=el('text',{x:r.x+pad,y:r.y+pad+11,fill:tc,'font-size':12.5,'font-weight':700},g); t.textContent=r.n;
+      if(r.h>=42){ const share=nf(r.v/tot*100,1)+'%'; const t2=el('text',{x:r.x+pad,y:r.y+pad+27,fill:tc,'font-size':11.5},g); t2.textContent=fits(mFmt(m,r.v)+' · '+share,11.5)? mFmt(m,r.v)+' · '+share : mFmt(m,r.v); }
+      if(r.h>=58){ const t3=el('text',{x:r.x+pad,y:r.y+pad+42,fill:tc,'font-size':11.5,'font-weight':700},g); t3.textContent= m==='deu'? (r.hv==null?'':nf(r.hv,0)+'% sin habilitación') : (r.hv==null?'s/base':'i.a. '+vShort(r.hv)); if(m==='deu'&&!fits(t3.textContent,11.5)) t3.textContent=nf(r.hv,0)+'% s/hab.'; }
+      if(r.s && r.w>=120 && r.h>=96){ const sx0=r.x+pad, sw=r.w-pad*2, sy1=r.y+r.h-pad, sh=Math.min(26,r.h-70); const mx=Math.max(...r.s,1);
+        const pts=r.s.map((v,i)=>[sx0+sw*i/11, sy1-sh*v/mx]);
+        el('polyline',{points:pts.map(q=>q.map(z=>z.toFixed(1)).join(',')).join(' '),fill:'none',stroke:tc,'stroke-width':1.6,'stroke-linejoin':'round',opacity:.85},g);
+        el('circle',{cx:pts[11][0],cy:pts[11][1],r:2.6,fill:tc},g); }
+    }
+    g.addEventListener('mousemove',ev=>{ tip.innerHTML=mTipHtml(m,r,GEO.pts.find(p=>p.n===r.n))+`<div class="r"><span>Participación</span><b>${nf(r.v/tot*100,1)}%</b></div>`; tip.classList.add('on'); placeTip(box,tip,ev); });
+    g.addEventListener('mouseleave',()=>tip.classList.remove('on'));
+    if(map) bindSel(g,r.n,false);
+  });
+}
+
+/* calor mensual: dependencias por mes */
+function renderGrid(items){
+  const m=S.mm, wrap=document.getElementById('mgridwrap'), note=document.getElementById('mgridnote');
+  if(m==='deu'){ wrap.hidden=true; note.hidden=false; return; }
+  wrap.hidden=false; note.hidden=true;
+  document.getElementById('mg-title').textContent=`${MM[m]} · evolución de los últimos 12 meses`;
+  const rows=items.filter(x=>x.s);
+  const cell=(v,b,cls='c')=>{ const h=vr(b,v), c=heat(m,h); return `<td class="${cls}" style="background:${rgbS(c)};color:${txtOn(c)}" title="${mFmt(m,v)} · ${h==null?'s/base':(h>0?'+':h<0?'−':'')+nf(Math.abs(h),1)+'%'}">${vShort(h)}</td>`; };
+  document.getElementById('mgrid').innerHTML=`<thead><tr><th>Dependencia</th>${[...Array(12).keys()].map(i=>`<th>${mesL(24+i)}</th>`).join('')}<th>12 meses</th></tr></thead>
+    <tbody>${rows.map(r=>`<tr class="${r.n===S.msel?'sel':''}"><td>${onMap(r.n)?`<button type="button" data-n="${r.n}">${r.n}</button>`:r.n}</td>${r.s.map((v,i)=>cell(v,r.p[i])).join('')}${cell(sum(r.s),sum(r.p),'c tot')}</tr>`).join('')}</tbody>`;
+  document.querySelectorAll('#mgrid button[data-n]').forEach(b=>b.addEventListener('click',()=>mSelect(b.dataset.n,false)));
+}
+document.querySelectorAll('#mmet button').forEach(b=>b.addEventListener('click',()=>{ S.mm=b.dataset.m; renderMap(); }));
+
 /* ---------- controles ---------- */
 function setPressed(grp,attr,val){ document.querySelectorAll(`#${grp} button`).forEach(b=>b.setAttribute('aria-pressed',String(b.dataset[attr]===val))); }
-function renderAll(){ setPressed('unit','u',S.unit); renderKPIs(); renderAcc(); renderCob(); renderDeuda(); renderX(); }
+function renderAll(){ setPressed('unit','u',S.unit); renderKPIs(); renderMap(); renderAcc(); renderCob(); renderDeuda(); renderX(); }
 document.querySelectorAll('#unit button').forEach(b=>b.addEventListener('click',()=>{ S.unit=b.dataset.u; try{localStorage.setItem('apn-unit',S.unit)}catch(e){} renderAll(); }));
 document.querySelectorAll('#amet button').forEach(b=>b.addEventListener('click',()=>{ S.am=b.dataset.m; setPressed('amet','m',S.am); renderAcc(); }));
 document.querySelectorAll('#cuniv button').forEach(b=>b.addEventListener('click',()=>{ S.cu=b.dataset.k; setPressed('cuniv','k',S.cu); renderCob(); }));
@@ -582,7 +874,7 @@ const ad=document.getElementById('adep');
 ad.innerHTML=['ALL',...Object.keys(D.acc.data).filter(d=>sum(SEG.map(s=>sum(D.acc.data[d][s.k].t)))>1000).sort((a,b)=>a.localeCompare(b,'es'))].map(o=>`<option value="${o}">${o==='ALL'?'Todas las dependencias':o}</option>`).join('');
 ad.addEventListener('change',()=>{ S.adep=ad.value; renderAcc(); });
 document.getElementById('dmore').addEventListener('click',()=>{ S.dAll=!S.dAll; renderDeuda(); });
-let rz; window.addEventListener('resize',()=>{ clearTimeout(rz); rz=setTimeout(()=>{renderAcc();renderCob();renderDeuda();renderX();},150); });
+let rz; window.addEventListener('resize',()=>{ clearTimeout(rz); rz=setTimeout(()=>{renderMap();renderAcc();renderCob();renderDeuda();renderX();},150); });
 if(window.matchMedia){ const mq=window.matchMedia('(prefers-color-scheme: dark)'); mq.addEventListener&&mq.addEventListener('change',renderAll); }
 new MutationObserver(renderAll).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 if(new URLSearchParams(location.search).has('print')||window.__PRINT__) S.dAll=true;

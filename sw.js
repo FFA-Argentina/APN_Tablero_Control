@@ -1,6 +1,6 @@
 /* Service worker del Tablero de control APN.
    Cambiar VERSION en cada publicación: quien tenga la app instalada verá el aviso de versión nueva. */
-const VERSION = 'tablero-apn-2026-10-31f';
+const VERSION = 'tablero-apn-2026-10-31g';
 const ARCHIVOS = [
   './',
   'index.html',
