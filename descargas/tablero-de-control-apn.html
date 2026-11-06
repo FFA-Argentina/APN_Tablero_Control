@@ -403,7 +403,7 @@ function monthChart(box,opt){
   const tops = opt.stacks? MON.map((_,i)=>sum(opt.stacks.map(s=>s.vals[i]))) : opt.bars.vals;
   const mx=niceMax(Math.max(...tops, ...(opt.line?opt.line.vals:[0]))*1.05);
   const y=v=>T+(H-T-B)*(1-v/mx);
-  for(let k=0;k<=4;k++){ const v=mx*k/4; el('line',{x1:L,x2:W-R,y1:y(v),y2:y(v),stroke:css('--grid'),'stroke-dasharray':k?'2 4':''},svg); const t=el('text',{x:L-6,y:y(v)+4,'text-anchor':'end',class:'axis'},svg); t.textContent=opt.axis(v); }
+  for(let k=0;k<=4;k++){ const v=mx*k/4; el('line',{x1:L,x2:W-R,y1:y(v),y2:y(v),stroke:css('--grid'),'stroke-dasharray':k?'2 4':''},svg); const t=el('text',{x:L-6,y:y(v)+4,'text-anchor':'end',class:'axis'},svg); t.textContent=opt.axis(v,mx/4); }
   [12,24].forEach(i=>{ el('line',{x1:L+i*bw,x2:L+i*bw,y1:T-14,y2:H-B,stroke:css('--ink'),'stroke-dasharray':'5 4',opacity:.45},svg); });
   CYC.forEach((c,ci)=>{ const t=el('text',{x:L+(ci*12+6)*bw,y:T-12,'text-anchor':'middle',class:'axis','font-style':'italic'},svg); t.textContent=W<560?c.replace('oct ','').replace('sep ',''):c; });
   const stp=W<560?6:3; for(let i=0;i<n;i+=stp){ const t=el('text',{x:L+i*bw+bw/2,y:H-B+16,'text-anchor':'middle',class:'axis'},svg); t.textContent=mesL(i); }
@@ -437,9 +437,9 @@ function renderKPIs(){
     <div class="chg"><span>i.a. ${pct(vr(x.v[1],x.v[2]))}</span><span>trienal ${pct(vr(x.v[0],x.v[2]))}</span></div>
     <div class="cyc">${x.v.map((v,i)=>`<span>${CYC[i]}<b>${mfmt(v)}</b></span>`).join('')}</div></div>`).join('');
   const d=D.deuda, us=S.unit==='usd';
-  const dv=x=>us? nf(x/D.usdDeuda/1e6,2) : nf(x/1e6,1);
-  h+=`<div class="kpi debt"><h3>Deuda exigible al 31/10/2026</h3><div class="big num">${us?'US$ ':'$ '}${dv(d.bruto)} M</div>
-   <div class="chg"><span>Neta <b>${us?'US$ ':'$ '}${dv(d.neto)} M</b></span><span>${us?'a $ 1.550':'nominales'}</span></div>
+  const dv=x=>us? nf(x/D.usdDeuda/1e3,0) : nf(x/1e6,1);
+  h+=`<div class="kpi debt"><h3>Deuda exigible al 31/10/2026</h3><div class="big num">${us?'US$ ':'$ '}${dv(d.bruto)}${us?' mil':' M'}</div>
+   <div class="chg"><span>Neta <b>${us?'US$ ':'$ '}${dv(d.neto)}${us?' mil':' M'}</b></span><span>${us?'a $ 1.550':'nominales'}</span></div>
    <div class="cyc"><span>Capital<b>${dv(d.cap)}</b></span><span>Intereses<b>${dv(d.int)}</b></span><span>Deudores<b>${nf(d.deudores)}</b></span></div></div>`;
   document.getElementById('kpis').innerHTML=h;
   document.getElementById('unitnote').textContent = 'Flujos por ciclo en '+UN[S.unit].lab+(S.unit==='usd'?'; la deuda, a $1.550 por dólar.':'; la deuda, en pesos nominales al 31/10/2026.');
@@ -470,7 +470,7 @@ function renderAcc(){
   document.getElementById('aser').innerHTML=all.map(s=>`<button type="button" data-k="${s.k}" aria-pressed="${!!S.acats[s.k]}"><i class="sq" style="background:var(${s.color})"></i>${s.name}<span class="v">${fv(c3(s))}</span></button>`).join('')+`<div class="tot">Total seleccionado<span class="v">${fv(sum(st.map(c3)))}</span></div>`;
   document.querySelectorAll('#aser button').forEach(b=>b.addEventListener('click',()=>{ const k=b.dataset.k; const on=Object.values(S.acats).filter(Boolean).length; if(S.acats[k]&&on===1) return; S.acats[k]=!S.acats[k]; renderAcc(); }));
   const f=v=>money_? mfmt(v) : nf(v);
-  monthChart(document.getElementById('achart'),{stacks:st,aria:AM[m]+' por mes',axis:v=>money_? nf(v, v>=100||!v?0:1) : axisFmt(v),
+  monthChart(document.getElementById('achart'),{stacks:st,aria:AM[m]+' por mes',axis:(v,st)=>money_? nf(v, st>=10||!v?0:st>=1?1:2) : axisFmt(v),
     tip:i=>`<div class="t">${mesL(i)}</div>${st.map(s=>`<div class="r"><span>${s.name}</span><b>${f(s.vals[i])}</b></div>`).join('')}<div class="r"><span>Total</span><b>${f(sum(st.map(s=>s.vals[i])))}</b></div>`});
   const rows=st.map(s=>({n:s.name,c:cyc(s.vals)})); const tot={n:'Total',c:[0,1,2].map(i=>sum(rows.map(r=>r.c[i])))};
   const tk=SEG.filter(s=>S.acats[s.k]).map(s=>cyc(accRaw(dep,s.k,'t'))); const tkt=[0,1,2].map(i=>sum(tk.map(r=>r[i])));
@@ -505,7 +505,7 @@ function renderCob(){
   document.querySelectorAll('#cser button').forEach(b=>b.addEventListener('click',()=>{ S.cdep= S.cdep===b.dataset.n?'ALL':b.dataset.n; renderCob(); }));
   const v=cobSer(k,S.cdep); const mm=v.map((x,i)=>i<2?null:(v[i]+v[i-1]+v[i-2])/3);
   document.getElementById('c-title').textContent=`${D.cob[k].label} · ${S.cdep==='ALL'?'todas las dependencias':S.cdep}`;
-  monthChart(document.getElementById('cchart'),{bars:{vals:v,color:S.cdep==='ALL'?'--bar':'--forest-2'},line:{vals:mm,color:'--amber'},aria:'Cobranza mensual',axis:v=>nf(v,v>=100||!v?0:1),
+  monthChart(document.getElementById('cchart'),{bars:{vals:v,color:S.cdep==='ALL'?'--bar':'--forest-2'},line:{vals:mm,color:'--amber'},aria:'Cobranza mensual',axis:(v,st)=>nf(v, st>=10||!v?0:st>=1?1:2),
     tip:i=>`<div class="t">${mesL(i)}</div><div class="r"><span>Mensual</span><b>${mfmt(v[i])}</b></div>${mm[i]!=null?`<div class="r"><span>Media 3 meses</span><b>${mfmt(mm[i])}</b></div>`:''}`});
   const c=cyc(v);
   document.getElementById('ccyc').innerHTML=c.map((x,i)=>`<div>${CYC[i]}<b class="num">${mfmt(x)}</b>${i<2?UN[S.unit].short:`i.a. ${pct(vr(c[1],c[2]))} · trienal ${pct(vr(c[0],c[2]))}`}</div>`).join('');
@@ -519,23 +519,23 @@ function renderCob(){
 
 /* ---------- deuda ---------- */
 function renderDeuda(){
-  const d=D.deuda, us=S.unit==='usd'; const dv=(x,dec=1)=> us? nf(x/D.usdDeuda/1e6,dec+1) : nf(x/1e6,dec); const uh=us?'US$ M':'$ M';
+  const d=D.deuda, us=S.unit==='usd'; const dv=(x,dec=1)=>{ if(us){ const v=x/D.usdDeuda/1e3; return nf(v, Math.abs(v)<10&&v!==0?1:0); } const v=x/1e6; return nf(v, Math.abs(v)<1&&v!==0?2:dec); }; const uh=us?'US$ miles':'$ M';
   const B=d.bruto;
   table('dkpi',[{h:'Concepto',f:r=>r.n},{h:uh,f:r=>(r.v<0?'−':'')+dv(Math.abs(r.v))},{h:'% de la bruta',f:r=>(r.v<0?'−':'')+nf(Math.abs(r.v)/B*100,1)+'%'}],
     [{n:'Capital',v:d.cap},{n:'Intereses devengados',v:d.int},{n:'Deuda bruta',v:d.bruto},{n:'Pagos a cuenta conciliados',v:-d.pac},{n:'Deuda neta',v:d.neto}],{redraw:renderDeuda,rowClass:r=>/Deuda/.test(r.n)?'tot':''});
   /* antigüedad */
   const box=document.getElementById('dchart'); box.innerHTML='';
   const W=Math.max(300,box.clientWidth||500), H=270, L=8, R=8, T=40, Bm=24; const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'Capital impago por año de origen'},box);
-  const vals=d.origen.map(x=> us? x/D.usdDeuda/1e6 : x/1e6), tot=sum(d.origen); const mx=Math.max(...vals); const bw=(W-L-R)/vals.length;
+  const vals=d.origen.map(x=> us? x/D.usdDeuda/1e3 : x/1e6), tot=sum(d.origen); const mx=Math.max(...vals); const bw=(W-L-R)/vals.length;
   const y=v=>T+(H-T-Bm)*(1-v/mx);
   el('line',{x1:L,x2:W-R,y1:H-Bm,y2:H-Bm,stroke:css('--ink'),opacity:.6},svg);
   vals.forEach((v,i)=>{ const isN=i>=vals.length-2, x=L+i*bw+bw*0.14, w=bw*0.72;
     el('rect',{x,y:y(v),width:w,height:Math.max(.8,H-Bm-y(v)),fill:css(isN?'--forest':'--bar')},svg);
     const big=d.origen[i]/tot>0.03;
-    if(big){ const t=el('text',{x:x+w/2,y:y(v)-18,'text-anchor':'middle',class:'lbl-strong','font-size':bw<44?10:11.5},svg); t.textContent=nf(v,us?2:0);
+    if(big){ const t=el('text',{x:x+w/2,y:y(v)-18,'text-anchor':'middle',class:'lbl-strong','font-size':bw<44?10:11.5},svg); t.textContent=nf(v,0);
       const t2=el('text',{x:x+w/2,y:y(v)-5,'text-anchor':'middle',class:'axis'},svg); t2.textContent=nf(d.origen[i]/tot*100,1)+'%'; }
     const lb=el('text',{x:x+w/2,y:H-Bm+15,'text-anchor':'middle',class:'axis'},svg); lb.textContent= W<620? d.years[i].replace(' (a oct)','').replace(/^20/,"'") : d.years[i].replace(' (a oct)',''); });
-  document.getElementById('dsub').textContent='Capital impago según año de origen del comprobante · '+(us?'US$ M a $1.550':'$ M nominales')+' · 2026 hasta octubre';
+  document.getElementById('dsub').textContent='Capital impago según año de origen del comprobante · '+(us?'US$ miles a $1.550':'$ M nominales')+' · 2026 hasta octubre';
   /* por dependencia */
   const rows=d.dep.map(r=>({...r,t:r.cap+r.int}));
   const vis=S.dAll?rows:rows.slice(0,10);
@@ -562,7 +562,7 @@ function renderX(){
   el('line',{x1:sx(rt),x2:sx(rt),y1:T-8,y2:H-4,stroke:css('--ink'),'stroke-dasharray':'4 3',opacity:.7},svg);
   const rl=el('text',{x:sx(rt)+4,y:T-12,class:'axis'},svg); rl.textContent='Total APN '+nf(rt,1)+'%';
   const us=S.unit==='usd';
-  table('xtab',[{h:'Dependencia',f:r=>r.n},{h:`Neto accesos (${UN[S.unit].short})`,f:r=>r.acc==null?'—':mfmt(r.acc),sv:r=>r.acc},{h:`Cobranza prest. (${UN[S.unit].short})`,f:r=>mfmt(r.cob),sv:r=>r.cob},{h:us?'Deuda (US$ M)':'Deuda ($ M)',f:r=>us?nf(r.deuda/D.usdDeuda,2):nf(r.deuda,1),sv:r=>r.deuda},{h:'Intereses / deuda',f:r=>nf(r.ints,1)+'%',sv:r=>r.ints},{h:'Habilitados / deuda',f:r=>nf(r.act,1)+'%',sv:r=>r.act}],rows,{redraw:renderX});
+  table('xtab',[{h:'Dependencia',f:r=>r.n},{h:`Neto accesos (${UN[S.unit].short})`,f:r=>r.acc==null?'—':mfmt(r.acc),sv:r=>r.acc},{h:`Cobranza prest. (${UN[S.unit].short})`,f:r=>mfmt(r.cob),sv:r=>r.cob},{h:us?'Deuda (US$ miles)':'Deuda ($ M)',f:r=>us?nf(r.deuda*1e3/D.usdDeuda,0):nf(r.deuda,1),sv:r=>r.deuda},{h:'Intereses / deuda',f:r=>nf(r.ints,1)+'%',sv:r=>r.ints},{h:'Habilitados / deuda',f:r=>nf(r.act,1)+'%',sv:r=>r.act}],rows,{redraw:renderX});
 }
 
 /* ---------- controles ---------- */

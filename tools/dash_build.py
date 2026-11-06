@@ -54,6 +54,18 @@ REP = [
     ("Total 34 dependencias", "Total 33 dependencias"),
     ("'Ver las 34 dependencias'", "'Ver las 33 dependencias'"),
     ("{h:S.unit==='usd'?'Neto/ticket (US$)':S.unit==='cer'?'Neto/ticket (u. CER)':'Neto/ticket ($)'", "{h:S.unit==='usd'?'Neto/ticket (US$)':'Neto/ticket ($)'"),
+    ("t.textContent=opt.axis(v)", "t.textContent=opt.axis(v,mx/4)"),
+    ("axis:v=>money_? nf(v, v>=100||!v?0:1) : axisFmt(v)", "axis:(v,st)=>money_? nf(v, st>=10||!v?0:st>=1?1:2) : axisFmt(v)"),
+    ("axis:v=>nf(v,v>=100||!v?0:1)", "axis:(v,st)=>nf(v, st>=10||!v?0:st>=1?1:2)"),
+    ("const dv=x=>us? nf(x/D.usdDeuda/1e6,2) : nf(x/1e6,1);", "const dv=x=>us? nf(x/D.usdDeuda/1e3,0) : nf(x/1e6,1);"),
+    ("${us?'US$ ':'$ '}${dv(d.bruto)} M", "${us?'US$ ':'$ '}${dv(d.bruto)}${us?' mil':' M'}"),
+    ("Neta <b>${us?'US$ ':'$ '}${dv(d.neto)} M</b>", "Neta <b>${us?'US$ ':'$ '}${dv(d.neto)}${us?' mil':' M'}</b>"),
+    ("const dv=(x,dec=1)=> us? nf(x/D.usdDeuda/1e6,dec+1) : nf(x/1e6,dec); const uh=us?'US$ M':'$ M';",
+     "const dv=(x,dec=1)=>{ if(us){ const v=x/D.usdDeuda/1e3; return nf(v, Math.abs(v)<10&&v!==0?1:0); } const v=x/1e6; return nf(v, Math.abs(v)<1&&v!==0?2:dec); }; const uh=us?'US$ miles':'$ M';"),
+    ("const vals=d.origen.map(x=> us? x/D.usdDeuda/1e6 : x/1e6), tot=sum(d.origen);", "const vals=d.origen.map(x=> us? x/D.usdDeuda/1e3 : x/1e6), tot=sum(d.origen);"),
+    ("t.textContent=nf(v,us?2:0)", "t.textContent=nf(v,0)"),
+    ("'US$ M a $1.550'", "'US$ miles a $1.550'"),
+    ("{h:us?'Deuda (US$ M)':'Deuda ($ M)',f:r=>us?nf(r.deuda/D.usdDeuda,2):nf(r.deuda,1)", "{h:us?'Deuda (US$ miles)':'Deuda ($ M)',f:r=>us?nf(r.deuda*1e3/D.usdDeuda,0):nf(r.deuda,1)"),
 ]
 for o, n in REP:
     assert o in js, o[:60]
